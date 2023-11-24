@@ -60,6 +60,11 @@ public class LoginOtpActivity extends AppCompatActivity {
 
         verifyBtn.setOnClickListener(v -> {
             String inputcode = inputOtp.getText().toString();
+            if(inputcode.length() <6){
+                inputOtp.setError("Please enter valid otp of 6 chars");
+                changeInProgress(false);
+                return;
+            }
             PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationCode,inputcode);
             signInMethod(credential);
         });

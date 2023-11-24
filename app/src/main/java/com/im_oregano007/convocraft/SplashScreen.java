@@ -6,7 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.im_oregano007.convocraft.utils.FirebaseUtils;
+
 public class SplashScreen extends AppCompatActivity {
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,9 +19,14 @@ public class SplashScreen extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(SplashScreen.this,LoginPhoneNumberActivity.class));
+                if(FirebaseUtils.isLoggedIn()){
+                    intent = new Intent(SplashScreen.this,MainActivity.class);
+                } else{
+                    intent = new Intent(SplashScreen.this,LoginPhoneNumberActivity.class);
+                }
+                startActivity(intent);
                 finish();
             }
-        },3000);
+        },1000);
     }
 }
