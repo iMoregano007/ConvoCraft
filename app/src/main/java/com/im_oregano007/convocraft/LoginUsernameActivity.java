@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.im_oregano007.convocraft.model.UserModel;
 import com.im_oregano007.convocraft.utils.FirebaseUtils;
@@ -56,7 +57,7 @@ public class LoginUsernameActivity extends AppCompatActivity {
         if(userModel != null){
             userModel.setUserName(userName);
         } else{
-            userModel = new UserModel(userName, phoneNumber, Timestamp.now());
+            userModel = new UserModel(userName, phoneNumber, Timestamp.now(), FirebaseUtils.currentUserId());
         }
         FirebaseUtils.getCurrentUserDetails().set(userModel).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
