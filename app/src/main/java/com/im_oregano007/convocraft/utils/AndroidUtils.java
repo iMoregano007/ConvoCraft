@@ -11,6 +11,9 @@ public class AndroidUtils {
     public static void showToast(Context context, String message){
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
+    public static void showToastShort(Context context, String message){
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
 
     public static void passUserModelAsIntent(Intent intent, UserModel model){
         intent.putExtra("username",model.getUserName());

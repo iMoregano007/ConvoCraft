@@ -68,5 +68,9 @@ public class FirebaseUtils {
 
     }
 
+    public static void logout(){
+        FirebaseAuth.getInstance().signOut();
+    }
+
 
 }
