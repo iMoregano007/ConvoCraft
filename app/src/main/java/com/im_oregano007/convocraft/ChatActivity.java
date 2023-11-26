@@ -1,5 +1,6 @@
 package com.im_oregano007.convocraft;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -8,12 +9,23 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.im_oregano007.convocraft.model.ChatroomModel;
 import com.im_oregano007.convocraft.model.UserModel;
 import com.im_oregano007.convocraft.utils.AndroidUtils;
+import com.im_oregano007.convocraft.utils.FirebaseUtils;
+
+import java.util.Arrays;
 
 public class ChatActivity extends AppCompatActivity {
 
     UserModel otherUser;
+    String chatroomID;
+
+    ChatroomModel chatroomModel;
 
     TextView otherUsername;
     ImageButton backBtn, messageSendBtn;
@@ -25,6 +37,7 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         otherUser = AndroidUtils.getUserModelFromIntent(getIntent());
+        chatroomID = FirebaseUtils.getChatroomId(FirebaseUtils.currentUserId(),otherUser.getUserId());
 
         otherUsername = findViewById(R.id.other_username);
         backBtn = findViewById(R.id.back_button);
@@ -36,6 +49,33 @@ public class ChatActivity extends AppCompatActivity {
             onBackPressed();
         });
 
+
+
         otherUsername.setText(otherUser.getUserName());
+        if(FirebaseUtils.currentUserId().equals(otherUser.getUserId())){
+            otherUsername.setText(otherUser.getUserName()+" (Me)");
+        } else{
+            otherUsername.setText(otherUser.getUserName());
+        }
+
+        getOrCreateChatroomModel();
+    }
+    void getOrCreateChatroomModel(){
+        FirebaseUtils.getChatroomReference(chatroomID).get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                chatroomModel = task.getResult().toObject(ChatroomModel.class);
+                if(chatroomModel==null){
+                    chatroomModel = new ChatroomModel(
+                            chatroomID,
+                            Timestamp.now(),
+                            Arrays.asList(FirebaseUtils.currentUserId(),otherUser.getUserId()),
+                            ""
+
+                    );
+
+                    FirebaseUtils.getChatroomReference(chatroomID).set(chatroomModel);
+                }
+            }
+        });
     }
 }
