@@ -1,11 +1,14 @@
 package com.im_oregano007.convocraft;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -54,9 +57,17 @@ public class ChatActivity extends AppCompatActivity {
         inputMessage = findViewById(R.id.input_message);
         chatRecyclerView = findViewById(R.id.chat_recycler_view);
 
-        backBtn.setOnClickListener( v -> {
-            onBackPressed();
+
+//        onBackPressed alternative code working partially part 1
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getOnBackPressedDispatcher().onBackPressed();
+            }
         });
+
+
+
 
 
 

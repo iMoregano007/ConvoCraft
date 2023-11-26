@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
@@ -37,8 +38,12 @@ public class SearchUserActivity extends AppCompatActivity {
         inputSearch.requestFocus();
 
 
-        backBtn.setOnClickListener(v -> {
-            onBackPressed();
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getOnBackPressedDispatcher().onBackPressed();
+//                onBackPressedDispatcher.onBackPressed();
+            }
         });
 
         searchUserBtn.setOnClickListener(v -> {
