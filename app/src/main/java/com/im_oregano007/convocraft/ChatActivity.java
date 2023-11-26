@@ -2,6 +2,7 @@ package com.im_oregano007.convocraft;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
@@ -9,11 +10,15 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
+import com.im_oregano007.convocraft.adapters.ChatRecyclerAdapter;
+import com.im_oregano007.convocraft.adapters.SearchUserRecyclerAdapter;
 import com.im_oregano007.convocraft.model.ChatMessageModel;
 import com.im_oregano007.convocraft.model.ChatroomModel;
 import com.im_oregano007.convocraft.model.UserModel;
@@ -28,6 +33,8 @@ public class ChatActivity extends AppCompatActivity {
     String chatroomID;
 
     ChatroomModel chatroomModel;
+
+    ChatRecyclerAdapter adapter;
 
     TextView otherUsername;
     ImageButton backBtn, messageSendBtn;
@@ -67,6 +74,30 @@ public class ChatActivity extends AppCompatActivity {
             if(message.isEmpty())
                 return;
             sendMessageToUser(message);
+        });
+
+        setUpRecyclerView();
+    }
+
+    void setUpRecyclerView(){
+        Query query = FirebaseUtils.getChatroomMessageReference(chatroomID)
+                .orderBy("timestamp", Query.Direction.DESCENDING);
+
+        FirestoreRecyclerOptions<ChatMessageModel> options = new FirestoreRecyclerOptions.Builder<ChatMessageModel>()
+                .setQuery(query,ChatMessageModel.class).build();
+
+        adapter = new ChatRecyclerAdapter(options, getApplicationContext());
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        manager.setReverseLayout(true);
+        chatRecyclerView.setLayoutManager(manager);
+        chatRecyclerView.setAdapter(adapter);
+        adapter.startListening();
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                chatRecyclerView.smoothScrollToPosition(0);
+            }
         });
     }
 
