@@ -1,6 +1,7 @@
 package com.im_oregano007.convocraft.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.im_oregano007.convocraft.ChatActivity;
 import com.im_oregano007.convocraft.R;
 import com.im_oregano007.convocraft.model.UserModel;
+import com.im_oregano007.convocraft.utils.AndroidUtils;
 import com.im_oregano007.convocraft.utils.FirebaseUtils;
 
 public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter<UserModel, SearchUserRecyclerAdapter.UserModelViewHolder> {
@@ -35,6 +38,10 @@ public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter<UserMode
 
         holder.itemView.setOnClickListener(v -> {
 //            move to chat activity
+            Intent intent = new Intent(context, ChatActivity.class);
+            AndroidUtils.passUserModelAsIntent(intent, model);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
         });
     }
 
