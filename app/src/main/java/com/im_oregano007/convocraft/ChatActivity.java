@@ -12,7 +12,9 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.im_oregano007.convocraft.model.ChatMessageModel;
 import com.im_oregano007.convocraft.model.ChatroomModel;
 import com.im_oregano007.convocraft.model.UserModel;
 import com.im_oregano007.convocraft.utils.AndroidUtils;
@@ -59,6 +61,31 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         getOrCreateChatroomModel();
+
+        messageSendBtn.setOnClickListener(v -> {
+            String message = inputMessage.getText().toString().trim();
+            if(message.isEmpty())
+                return;
+            sendMessageToUser(message);
+        });
+    }
+
+    void sendMessageToUser(String message){
+
+        chatroomModel.setLastMessageTimeStamp(Timestamp.now());
+        chatroomModel.setLastMessageSenderId(FirebaseUtils.currentUserId());
+        FirebaseUtils.getChatroomReference(chatroomID).set(chatroomModel);
+
+
+        ChatMessageModel chatMessageModel = new ChatMessageModel(message,FirebaseUtils.currentUserId(),Timestamp.now());
+        FirebaseUtils.getChatroomMessageReference(chatroomID).add(chatMessageModel).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+                if(task.isSuccessful()){
+                    inputMessage.setText("");
+                }
+            }
+        });
     }
     void getOrCreateChatroomModel(){
         FirebaseUtils.getChatroomReference(chatroomID).get().addOnCompleteListener(task -> {
