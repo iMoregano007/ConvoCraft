@@ -1,0 +1,82 @@
+package com.im_oregano007.convocraft.adapters;
+
+import android.content.Context;
+import android.content.Intent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.im_oregano007.convocraft.ChatActivity;
+import com.im_oregano007.convocraft.R;
+import com.im_oregano007.convocraft.model.ChatroomModel;
+import com.im_oregano007.convocraft.model.UserModel;
+import com.im_oregano007.convocraft.utils.AndroidUtils;
+import com.im_oregano007.convocraft.utils.FirebaseUtils;
+
+public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatroomModel, RecentChatRecyclerAdapter.ChatroomModelViewHolder> {
+
+    Context context;
+    public RecentChatRecyclerAdapter(@NonNull FirestoreRecyclerOptions<ChatroomModel> options, Context context) {
+        super(options);
+        this.context = context;
+    }
+
+    @Override
+    protected void onBindViewHolder(@NonNull ChatroomModelViewHolder holder, int position, @NonNull ChatroomModel model) {
+        FirebaseUtils.getOtherUserFromChatroom(model.getUserIds())
+                .get().addOnCompleteListener(task -> {
+                    if(task.isSuccessful()){
+                        boolean lastMsgSentByMe = model.getLastMessageSenderId().equals(FirebaseUtils.currentUserId());
+                        UserModel otherUser = task.getResult().toObject(UserModel.class);
+                        if(otherUser.getUserId().equals(FirebaseUtils.currentUserId())){
+                            holder.usernameTextV.setText(otherUser.getUserName()+" (Me)");
+                        } else {
+                            holder.usernameTextV.setText(otherUser.getUserName());
+                        }
+                        if(lastMsgSentByMe){
+                            holder.lastMessageTextV.setText("You : "+model.getLastMessage());
+                        } else
+                            holder.lastMessageTextV.setText(model.getLastMessage());
+                        holder.lastMessageTimeTextV.setText(FirebaseUtils.timestampToString(model.getLastMessageTimeStamp()));
+
+                        holder.itemView.setOnClickListener(v -> {
+//            move to chat activity
+                            Intent intent = new Intent(context, ChatActivity.class);
+                            AndroidUtils.passUserModelAsIntent(intent, otherUser);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(intent);
+                        });
+                    }
+                });
+    }
+
+    @NonNull
+    @Override
+    public ChatroomModelViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.recent_chat_recycler_row,parent,false);
+        return new ChatroomModelViewHolder(view);
+    }
+
+    class ChatroomModelViewHolder extends RecyclerView.ViewHolder{
+
+        TextView usernameTextV, lastMessageTextV, lastMessageTimeTextV;
+        ImageView profilePic;
+        public ChatroomModelViewHolder(@NonNull View itemView) {
+            super(itemView);
+            usernameTextV = itemView.findViewById(R.id.username_text);
+            lastMessageTextV = itemView.findViewById(R.id.last_message_text);
+            lastMessageTimeTextV = itemView.findViewById(R.id.last_msg_time_text);
+            profilePic = itemView.findViewById(R.id.user_profile_picture);
+        }
+    }
+}
