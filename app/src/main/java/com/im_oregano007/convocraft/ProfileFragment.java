@@ -24,6 +24,7 @@ import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.UploadTask;
 import com.im_oregano007.convocraft.model.UserModel;
 import com.im_oregano007.convocraft.utils.AndroidUtils;
@@ -84,11 +85,17 @@ public class ProfileFragment extends Fragment {
         });
 
         logoutBtn.setOnClickListener(v -> {
-            FirebaseUtils.logout();
-            AndroidUtils.showToastShort(getContext(),"Logged Out Successfully");
-            Intent intent = new Intent(getContext(), SplashScreen.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
+            FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener(task -> {
+                if(task.isSuccessful()){
+                    FirebaseUtils.logout();
+                    AndroidUtils.showToastShort(getContext(),"Logged Out Successfully");
+                    Intent intent = new Intent(getContext(), SplashScreen.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                }
+            });
+
+
         });
 
         profilePic.setOnClickListener((v) ->{
