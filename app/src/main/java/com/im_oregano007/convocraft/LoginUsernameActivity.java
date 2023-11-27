@@ -92,8 +92,11 @@ public class LoginUsernameActivity extends AppCompatActivity {
     void getUsername(){
 //get image to load on login screen
         FirebaseUtils.getCurrentProfilePicStorageRef().getDownloadUrl().addOnCompleteListener(task -> {
-            Uri imageUri = task.getResult();
-            AndroidUtils.setProfilePic(this,imageUri,profilePic);
+            if(task.isSuccessful()){
+                Uri imageUri = task.getResult();
+                AndroidUtils.setProfilePic(this,imageUri,profilePic);
+            }
+
         });
         changeInProgress(true);
         FirebaseUtils.getCurrentUserDetails().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
