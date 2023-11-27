@@ -2,6 +2,7 @@ package com.im_oregano007.convocraft.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,14 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
                         } else {
                             holder.usernameTextV.setText(otherUser.getUserName());
                         }
+
+                        FirebaseUtils.getOtherUserProfilePicStorageRef(otherUser.getUserId()).getDownloadUrl().addOnCompleteListener(t -> {
+                            if(t.isSuccessful()){
+                                Uri imageUri = t.getResult();
+                                AndroidUtils.setProfilePic(context,imageUri,holder.profilePic);
+                            }
+
+                        });
                         if(lastMsgSentByMe){
                             holder.lastMessageTextV.setText("You : "+model.getLastMessage());
                         } else

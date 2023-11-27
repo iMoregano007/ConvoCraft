@@ -9,7 +9,6 @@
         android:src="@drawable/user_icon"
         android:padding="4dp"
         android:id="@+id/user_profile_picture"
-        app:tint="@color/gray_shade"
         android:backgroundTint="@color/off_white"
         android:background="@drawable/circular_bg"
         android:layout_centerInParent="true"

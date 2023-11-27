@@ -1,9 +1,14 @@
 package com.im_oregano007.convocraft;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -15,12 +20,17 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.storage.UploadTask;
 import com.im_oregano007.convocraft.model.UserModel;
 import com.im_oregano007.convocraft.utils.AndroidUtils;
 import com.im_oregano007.convocraft.utils.FirebaseUtils;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 
 public class ProfileFragment extends Fragment {
@@ -32,10 +42,26 @@ public class ProfileFragment extends Fragment {
     TextView logoutBtn;
     UserModel currentUser;
     String oldUsername;
+    ActivityResultLauncher<Intent> imagePicLauncher;
+    Uri selectedImageUri;
 
 
     public ProfileFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        imagePicLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result ->{
+           if(result.getResultCode() == Activity.RESULT_OK){
+               Intent data = result.getData();
+               if(data!=null && data.getData()!=null){
+                    selectedImageUri = data.getData();
+                    AndroidUtils.setProfilePic(getContext(),selectedImageUri,profilePic);
+               }
+           }
+        });
     }
 
     @Override
@@ -65,6 +91,17 @@ public class ProfileFragment extends Fragment {
             startActivity(intent);
         });
 
+        profilePic.setOnClickListener((v) ->{
+            ImagePicker.with(this).cropSquare().compress(512).maxResultSize(512,512)
+                    .createIntent(new Function1<Intent, Unit>() {
+                        @Override
+                        public Unit invoke(Intent intent) {
+                            imagePicLauncher.launch(intent);
+                            return null;
+                        }
+                    });
+        });
+
         return view;
     }
 
@@ -75,11 +112,23 @@ public class ProfileFragment extends Fragment {
             return;
         }
 
-        if(!oldUsername.equals(newUserName.trim())){
+        if(selectedImageUri!=null){
+            changeInProgress(true);
+            FirebaseUtils.getCurrentProfilePicStorageRef().putFile(selectedImageUri)
+                    .addOnCompleteListener(task -> {
+                        updateToFireStore();
+                    });
+        } else if(!oldUsername.equals(newUserName.trim())){
             currentUser.setUserName(newUserName);
             changeInProgress(true);
             updateToFireStore();
         }
+
+//        if(!oldUsername.equals(newUserName.trim())){
+//            currentUser.setUserName(newUserName);
+//            changeInProgress(true);
+//            updateToFireStore();
+//        }
 
 
 
@@ -97,6 +146,14 @@ public class ProfileFragment extends Fragment {
     }
 
     void getUserData(){
+        FirebaseUtils.getCurrentProfilePicStorageRef().getDownloadUrl().addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                Uri imageUri = task.getResult();
+                AndroidUtils.setProfilePic(getContext(),imageUri,profilePic);
+            }
+
+        });
+
         changeInProgress(true);
         FirebaseUtils.getCurrentUserDetails().get().addOnCompleteListener(task -> {
             changeInProgress(false);

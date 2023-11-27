@@ -2,6 +2,7 @@ package com.im_oregano007.convocraft.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,14 @@ public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter<UserMode
         if(model.getUserId().equals(FirebaseUtils.currentUserId())){
             holder.usernameTextV.setText(model.getUserName()+" (Me)");
         }
+
+        FirebaseUtils.getOtherUserProfilePicStorageRef(model.getUserId()).getDownloadUrl().addOnCompleteListener(t -> {
+            if(t.isSuccessful()){
+                Uri imageUri = t.getResult();
+                AndroidUtils.setProfilePic(context,imageUri,holder.profilePic);
+            }
+
+        });
 
         holder.itemView.setOnClickListener(v -> {
 //            move to chat activity

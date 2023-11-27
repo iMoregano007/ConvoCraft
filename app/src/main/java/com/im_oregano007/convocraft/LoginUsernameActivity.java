@@ -1,22 +1,32 @@
 package com.im_oregano007.convocraft;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.im_oregano007.convocraft.model.UserModel;
+import com.im_oregano007.convocraft.utils.AndroidUtils;
 import com.im_oregano007.convocraft.utils.FirebaseUtils;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 public class LoginUsernameActivity extends AppCompatActivity {
 
@@ -26,11 +36,16 @@ public class LoginUsernameActivity extends AppCompatActivity {
 
     String phoneNumber;
     UserModel userModel;
+    ImageView profilePic;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_username);
+        profilePic = findViewById(R.id.login_profile_pic);
+
+
 
         inputUsername = findViewById(R.id.login_username);
         startBtn = findViewById(R.id.login_start_btn);
@@ -42,7 +57,6 @@ public class LoginUsernameActivity extends AppCompatActivity {
         startBtn.setOnClickListener((v -> {
             setUsername();
         }));
-
 
     }
 
@@ -59,6 +73,8 @@ public class LoginUsernameActivity extends AppCompatActivity {
         } else{
             userModel = new UserModel(userName, phoneNumber, Timestamp.now(), FirebaseUtils.currentUserId());
         }
+
+
         FirebaseUtils.getCurrentUserDetails().set(userModel).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -74,6 +90,11 @@ public class LoginUsernameActivity extends AppCompatActivity {
     }
 
     void getUsername(){
+//get image to load on login screen
+        FirebaseUtils.getCurrentProfilePicStorageRef().getDownloadUrl().addOnCompleteListener(task -> {
+            Uri imageUri = task.getResult();
+            AndroidUtils.setProfilePic(this,imageUri,profilePic);
+        });
         changeInProgress(true);
         FirebaseUtils.getCurrentUserDetails().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override

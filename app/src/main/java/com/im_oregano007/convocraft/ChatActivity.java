@@ -7,10 +7,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -44,6 +46,8 @@ public class ChatActivity extends AppCompatActivity {
     EditText inputMessage;
     RecyclerView chatRecyclerView;
 
+    ImageView profilePic;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +61,15 @@ public class ChatActivity extends AppCompatActivity {
         inputMessage = findViewById(R.id.input_message);
         chatRecyclerView = findViewById(R.id.chat_recycler_view);
 
+        profilePic = findViewById(R.id.user_profile_picture);
+
+        FirebaseUtils.getOtherUserProfilePicStorageRef(otherUser.getUserId()).getDownloadUrl().addOnCompleteListener(t -> {
+            if(t.isSuccessful()){
+                Uri imageUri = t.getResult();
+                AndroidUtils.setProfilePic(this,imageUri,profilePic);
+            }
+
+        });
 
 //        onBackPressed alternative code working partially part 1
         backBtn.setOnClickListener(new View.OnClickListener() {

@@ -2,8 +2,12 @@ package com.im_oregano007.convocraft.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.im_oregano007.convocraft.model.UserModel;
 
 public class AndroidUtils {
@@ -27,5 +31,9 @@ public class AndroidUtils {
         otherModel.setPhone(intent.getStringExtra("phone"));
         otherModel.setUserId(intent.getStringExtra("userId"));
         return otherModel;
+    }
+
+    public static void setProfilePic(Context context, Uri imageUri, ImageView imageView){
+        Glide.with(context).load(imageUri).apply(RequestOptions.circleCropTransform()).into(imageView);
     }
 }
