@@ -219,6 +219,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
     }
+//   this is a comment
 
     void callApis(JSONObject jsonObject){
         MediaType JSON = MediaType.get("application/json");
