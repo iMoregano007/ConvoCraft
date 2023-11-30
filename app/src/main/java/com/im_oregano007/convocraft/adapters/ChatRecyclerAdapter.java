@@ -31,14 +31,25 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
     @Override
     protected void onBindViewHolder(@NonNull ChatModelViewHolder holder, int position, @NonNull ChatMessageModel model) {
 //        can set timestamp as well from here
+
         if(model.getSenderId().equals(FirebaseUtils.currentUserId())){
             holder.leftChatLayout.setVisibility(View.GONE);
             holder.rightChatLayout.setVisibility(View.VISIBLE);
             holder.rightChatTextV.setText(model.getMessage());
+            holder.rightChatTimestamp.setText(FirebaseUtils.timestampToString(model.getTimestamp()));
+            if(model.isSeen()){
+                holder.seenStatus.setText("seen");
+            } else {
+                holder.seenStatus.setText("sent");
+            }
         } else {
             holder.rightChatLayout.setVisibility(View.GONE);
             holder.leftChatLayout.setVisibility(View.VISIBLE);
             holder.leftChatTextV.setText(model.getMessage());
+            holder.leftChatTimestamp.setText(FirebaseUtils.timestampToString(model.getTimestamp()));
+            if(!model.isSeen()){
+                FirebaseUtils.getChatroomMessageReference(FirebaseUtils.getChatroomId(FirebaseUtils.currentUserId(),model.getSenderId())).document(model.getMsgId()).update("isSeen",true);
+            }
         }
     }
 
@@ -52,13 +63,16 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
     class ChatModelViewHolder extends RecyclerView.ViewHolder{
 
         LinearLayout leftChatLayout, rightChatLayout;
-        TextView leftChatTextV, rightChatTextV;
+        TextView leftChatTextV, rightChatTextV, leftChatTimestamp, rightChatTimestamp, seenStatus;
         public ChatModelViewHolder(@NonNull View itemView) {
             super(itemView);
             leftChatLayout = itemView.findViewById(R.id.left_message_layout);
             rightChatLayout = itemView.findViewById(R.id.right_message_layout);
             leftChatTextV = itemView.findViewById(R.id.left_chat_textv);
             rightChatTextV = itemView.findViewById(R.id.right_chat_textv);
+            leftChatTimestamp = itemView.findViewById(R.id.left_chat_timestamp);
+            rightChatTimestamp = itemView.findViewById(R.id.right_chat_timestamp);
+            seenStatus = itemView.findViewById(R.id.seen_status);
 
         }
     }

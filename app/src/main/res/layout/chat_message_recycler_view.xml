@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="8dp"
     android:background="@color/background">
 
@@ -12,13 +13,23 @@
         android:backgroundTint="@color/message_receiver"
         android:padding="8dp"
         android:layout_marginEnd="80dp"
+        android:orientation="vertical"
         android:id="@+id/left_message_layout">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:textSize="18sp"
+            tools:text="hello guys"
             android:id="@+id/left_chat_textv"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            tools:text="10:00"
+            android:textColor="@color/white"
+            android:layout_gravity="end"
+            android:id="@+id/left_chat_timestamp"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"
@@ -28,13 +39,42 @@
         android:padding="8dp"
         android:layout_marginStart="80dp"
         android:layout_alignParentEnd="true"
+        android:orientation="vertical"
         android:id="@+id/right_message_layout">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:textSize="18sp"
+            tools:text="hello guys"
+
             android:id="@+id/right_chat_textv"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:layout_gravity="end"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                tools:text="sent"
+                android:textColor="@color/my_primary"
+                android:layout_gravity="end"
+                android:id="@+id/seen_status"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                tools:text="10:00"
+                android:layout_marginStart="2dp"
+                android:textColor="@color/white"
+                android:layout_gravity="end"
+                android:id="@+id/right_chat_timestamp"/>
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </RelativeLayout>

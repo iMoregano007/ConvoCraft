@@ -58,6 +58,8 @@ public class ChatActivity extends AppCompatActivity {
     RecyclerView chatRecyclerView;
 
     ImageView profilePic;
+//    seenStatus applying code
+    String currentMsgId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,22 +140,39 @@ public class ChatActivity extends AppCompatActivity {
 
     void sendMessageToUser(String message){
 
+
+
         chatroomModel.setLastMessageTimeStamp(Timestamp.now());
         chatroomModel.setLastMessageSenderId(FirebaseUtils.currentUserId());
         chatroomModel.setLastMessage(message);
         FirebaseUtils.getChatroomReference(chatroomID).set(chatroomModel);
 
 
-        ChatMessageModel chatMessageModel = new ChatMessageModel(message,FirebaseUtils.currentUserId(),Timestamp.now());
+        ChatMessageModel chatMessageModel = new ChatMessageModel(message,FirebaseUtils.currentUserId(),Timestamp.now(),false,"");
         FirebaseUtils.getChatroomMessageReference(chatroomID).add(chatMessageModel).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
                 if(task.isSuccessful()){
+                    currentMsgId = task.getResult().getId();
+                    FirebaseUtils.getChatroomMessageReference(chatroomID).document(currentMsgId).update("msgId",currentMsgId);
                     inputMessage.setText("");
                     sendNotification(message);
                 }
             }
         });
+
+//      here is a problem with the seen status yet to be rectified later
+
+//        FirebaseUtils.getChatroomMessageReference(chatroomID).document(currentMsgId).update("msgId",currentMsgId).addOnCompleteListener(new OnCompleteListener<Void>() {
+//            @Override
+//            public void onComplete(@NonNull Task<Void> task) {
+//                if(task.isSuccessful()){
+//                    inputMessage.setText("");
+//                    sendNotification(message);
+//                }
+//            }
+//        });
+
     }
     void getOrCreateChatroomModel(){
         FirebaseUtils.getChatroomReference(chatroomID).get().addOnCompleteListener(task -> {
@@ -211,7 +230,7 @@ public class ChatActivity extends AppCompatActivity {
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
-                .header("Authorization","Bearer AAAA3NEjjQM:APA91bHPRXKUWuGtKSL49YSMKGjGr-DIrH5Tba9oA96GYOpm1dzIbwJJObH6wszPAwpNX8MwAixhsevknPGvskJEPVtvo2tjtkArQ_hdiCbMZkjm6eR5CDLpj0UeG06qUhE7uKUjfjl5")
+                .header("Authorization","Bearer -apiKey-")
                 .build();
         client.newCall(request).enqueue(new Callback() {
             @Override
