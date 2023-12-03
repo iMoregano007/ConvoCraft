@@ -36,6 +36,7 @@ public class SplashScreen extends AppCompatActivity {
                             AndroidUtils.passUserModelAsIntent(intent, model);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
+                            finish();
                         }
                     });
 

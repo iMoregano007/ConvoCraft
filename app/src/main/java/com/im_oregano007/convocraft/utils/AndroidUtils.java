@@ -24,6 +24,7 @@ public class AndroidUtils {
         intent.putExtra("phone",model.getPhone());
         intent.putExtra("userId",model.getUserId());
         intent.putExtra("fcmToken",model.getFcmToken());
+        intent.putExtra("onlineStatus",model.getOnlineStatus());
     }
 
     public static UserModel getUserModelFromIntent(Intent intent){
@@ -32,6 +33,7 @@ public class AndroidUtils {
         otherModel.setPhone(intent.getStringExtra("phone"));
         otherModel.setUserId(intent.getStringExtra("userId"));
         otherModel.setFcmToken(intent.getStringExtra("fcmToken"));
+        otherModel.setOnlineStatus(intent.getStringExtra("onlineStatus"));
         return otherModel;
     }
 

@@ -6,18 +6,18 @@ public class ChatMessageModel {
     private String message;
     private String senderId;
     private Timestamp timestamp;
-    private boolean isSeen;
+    private String seenStatus;
 
     private String msgId;
 
     public ChatMessageModel() {
     }
 
-    public ChatMessageModel(String message, String senderId, Timestamp timestamp, boolean isSeen, String msgId) {
+    public ChatMessageModel(String message, String senderId, Timestamp timestamp, String seenStatus, String msgId) {
         this.message = message;
         this.senderId = senderId;
         this.timestamp = timestamp;
-        this.isSeen = isSeen;
+        this.seenStatus = seenStatus;
         this.msgId = msgId;
     }
 
@@ -45,12 +45,12 @@ public class ChatMessageModel {
         this.timestamp = timestamp;
     }
 
-    public boolean isSeen() {
-        return isSeen;
+    public String getSeenStatus() {
+        return seenStatus;
     }
 
-    public void setSeen(boolean seen) {
-        isSeen = seen;
+    public void setSeenStatus(String seenStatus) {
+        this.seenStatus = seenStatus;
     }
 
     public String getMsgId() {

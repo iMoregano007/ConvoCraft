@@ -31,24 +31,24 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
     @Override
     protected void onBindViewHolder(@NonNull ChatModelViewHolder holder, int position, @NonNull ChatMessageModel model) {
 //        can set timestamp as well from here
-
+        String seenS = model.getSeenStatus();
         if(model.getSenderId().equals(FirebaseUtils.currentUserId())){
             holder.leftChatLayout.setVisibility(View.GONE);
             holder.rightChatLayout.setVisibility(View.VISIBLE);
             holder.rightChatTextV.setText(model.getMessage());
             holder.rightChatTimestamp.setText(FirebaseUtils.timestampToString(model.getTimestamp()));
-            if(model.isSeen()){
-                holder.seenStatus.setText("seen");
-            } else {
+            if(seenS==null){
                 holder.seenStatus.setText("sent");
+            } else {
+                holder.seenStatus.setText(seenS);
             }
         } else {
             holder.rightChatLayout.setVisibility(View.GONE);
             holder.leftChatLayout.setVisibility(View.VISIBLE);
             holder.leftChatTextV.setText(model.getMessage());
             holder.leftChatTimestamp.setText(FirebaseUtils.timestampToString(model.getTimestamp()));
-            if(!model.isSeen()){
-                FirebaseUtils.getChatroomMessageReference(FirebaseUtils.getChatroomId(FirebaseUtils.currentUserId(),model.getSenderId())).document(model.getMsgId()).update("isSeen",true);
+            if(seenS == null || seenS.equals("sent")){
+                FirebaseUtils.getChatroomMessageReference(FirebaseUtils.getChatroomId(FirebaseUtils.currentUserId(),model.getSenderId())).document(model.getMsgId()).update("seenStatus","seen");
             }
         }
     }

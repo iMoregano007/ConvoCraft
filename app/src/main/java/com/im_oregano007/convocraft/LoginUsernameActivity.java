@@ -71,7 +71,7 @@ public class LoginUsernameActivity extends AppCompatActivity {
         if(userModel != null){
             userModel.setUserName(userName);
         } else{
-            userModel = new UserModel(userName, phoneNumber, Timestamp.now(), FirebaseUtils.currentUserId());
+            userModel = new UserModel(userName, phoneNumber, Timestamp.now(), FirebaseUtils.currentUserId(),"Offline");
         }
 
 

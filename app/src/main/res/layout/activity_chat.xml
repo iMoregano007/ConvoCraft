@@ -13,17 +13,37 @@
         android:background="@color/my_primary"
         android:padding="10dp"
         android:id="@+id/toolbar">
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Username"
-            android:textStyle="bold"
-            android:textColor="@color/white"
+            android:orientation="vertical"
             android:layout_marginStart="10dp"
-            android:textSize="22sp"
-            android:id="@+id/other_username"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/profile_pic_layout"/>
+            android:id="@+id/otherUserDetails"
+            android:layout_toEndOf="@id/profile_pic_layout">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Username"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                android:id="@+id/other_username"
+             />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Active Status"
+                android:id="@+id/otherUserStatus"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/white"
+            />
+
+        </LinearLayout>
+
+
+
         <ImageButton
             android:layout_width="32dp"
             android:layout_height="32dp"

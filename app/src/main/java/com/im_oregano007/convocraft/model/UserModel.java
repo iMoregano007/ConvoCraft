@@ -11,15 +11,18 @@ public class UserModel {
 
     private String fcmToken;
 
+  private String onlineStatus;
+
     public UserModel() {
     }
 
-    public UserModel( String userName, String phone, Timestamp createdTimestamp, String userId) {
+    public UserModel( String userName, String phone, Timestamp createdTimestamp, String userId, String onlineStatus) {
 
         this.userName = userName;
         this.phone = phone;
         this.createdTimestamp = createdTimestamp;
         this.userId = userId;
+        this.onlineStatus = onlineStatus;
     }
 
     public String getPhone() {
@@ -62,5 +65,11 @@ public class UserModel {
         this.fcmToken = fcmToken;
     }
 
+    public String getOnlineStatus() {
+        return onlineStatus;
+    }
 
+    public void setOnlineStatus(String onlineStatus) {
+        this.onlineStatus = onlineStatus;
+    }
 }

@@ -7,12 +7,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -60,6 +62,12 @@ public class ChatActivity extends AppCompatActivity {
     ImageView profilePic;
 //    seenStatus applying code
     String currentMsgId;
+//    trying to add active status
+    TextView activeStatus;
+
+    LinearLayout otherUserDetails;
+
+    boolean cameFromSearchUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,14 +75,19 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
         otherUser = AndroidUtils.getUserModelFromIntent(getIntent());
         chatroomID = FirebaseUtils.getChatroomId(FirebaseUtils.currentUserId(),otherUser.getUserId());
-
+//        online status
         otherUsername = findViewById(R.id.other_username);
         backBtn = findViewById(R.id.back_button);
         messageSendBtn = findViewById(R.id.message_send_btn);
         inputMessage = findViewById(R.id.input_message);
         chatRecyclerView = findViewById(R.id.chat_recycler_view);
+        activeStatus = findViewById(R.id.otherUserStatus);
+        otherUserDetails = findViewById(R.id.otherUserDetails);
 
         profilePic = findViewById(R.id.user_profile_picture);
+
+//        trying to solve bug
+        cameFromSearchUser = getIntent().getBooleanExtra("cameFromSearchSection",false);
 
         FirebaseUtils.getOtherUserProfilePicStorageRef(otherUser.getUserId()).getDownloadUrl().addOnCompleteListener(t -> {
             if(t.isSuccessful()){
@@ -85,10 +98,12 @@ public class ChatActivity extends AppCompatActivity {
         });
 
 //        onBackPressed alternative code working partially part 1
+
+
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getOnBackPressedDispatcher().onBackPressed();
+                onBackBtnClick();
             }
         });
 
@@ -98,6 +113,13 @@ public class ChatActivity extends AppCompatActivity {
 
 
         otherUsername.setText(otherUser.getUserName());
+//        online status
+        if(otherUser.getOnlineStatus()!= null){
+            activeStatus.setText(otherUser.getOnlineStatus());
+        } else {
+            activeStatus.setText("Offline");
+        }
+
         if(FirebaseUtils.currentUserId().equals(otherUser.getUserId())){
             otherUsername.setText(otherUser.getUserName()+" (Me)");
         } else{
@@ -114,6 +136,14 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         setUpRecyclerView();
+
+//        trying to show OtherUser profile
+        otherUserDetails.setOnClickListener(v -> {
+            Intent intent = new Intent(this, UserDetails.class);
+            AndroidUtils.passUserModelAsIntent(intent, otherUser);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        });
     }
 
     void setUpRecyclerView(){
@@ -148,7 +178,7 @@ public class ChatActivity extends AppCompatActivity {
         FirebaseUtils.getChatroomReference(chatroomID).set(chatroomModel);
 
 
-        ChatMessageModel chatMessageModel = new ChatMessageModel(message,FirebaseUtils.currentUserId(),Timestamp.now(),false,"");
+        ChatMessageModel chatMessageModel = new ChatMessageModel(message,FirebaseUtils.currentUserId(),Timestamp.now(),"sent","");
         FirebaseUtils.getChatroomMessageReference(chatroomID).add(chatMessageModel).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
@@ -173,6 +203,17 @@ public class ChatActivity extends AppCompatActivity {
 //            }
 //        });
 
+    }
+//    trying to solve bug
+    void onBackBtnClick(){
+        if(cameFromSearchUser){
+                Intent mainIntent = new Intent(this, MainActivity.class);
+                mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(mainIntent);
+
+        } else {
+            getOnBackPressedDispatcher().onBackPressed();
+        }
     }
     void getOrCreateChatroomModel(){
         FirebaseUtils.getChatroomReference(chatroomID).get().addOnCompleteListener(task -> {
@@ -219,7 +260,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
     }
-//   this is a comment
+
 
     void callApis(JSONObject jsonObject){
         MediaType JSON = MediaType.get("application/json");
@@ -231,7 +272,7 @@ public class ChatActivity extends AppCompatActivity {
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
-                .header("Authorization","Bearer -apiKey-")
+                .header("Authorization","Bearer AAAA3NEjjQM:APA91bHPRXKUWuGtKSL49YSMKGjGr-DIrH5Tba9oA96GYOpm1dzIbwJJObH6wszPAwpNX8MwAixhsevknPGvskJEPVtvo2tjtkArQ_hdiCbMZkjm6eR5CDLpj0UeG06qUhE7uKUjfjl5")
                 .build();
         client.newCall(request).enqueue(new Callback() {
             @Override
