@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     AiCornerFragment aiCornerFragment;
     ProfileFragment profileFragment;
 
-    String tempStatus = "";
+//    String tempStatus = "";
 
 
 //    trying code to ask for notification permission at runtime code p1
@@ -52,7 +52,7 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
         bottomNavigationView = findViewById(R.id.main_navigation_view);
         searchBtn = findViewById(R.id.search_button);
 
-        setOnlineStatus("Online");
+        setOnlineStatus(true);
 
 //        p2
         if(!checkNotificationPermission()){
@@ -84,45 +84,45 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
 
         getFCMToken();
 
-        FirebaseUtils.getCurrentUserDetails().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    UserModel testUser = task.getResult().toObject(UserModel.class);
-                    tempStatus = testUser.getOnlineStatus();
-                }
-            }
-        });
-        Log.i("Main A status",tempStatus);
+//        FirebaseUtils.getCurrentUserDetails().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                if(task.isSuccessful()){
+//                    UserModel testUser = task.getResult().toObject(UserModel.class);
+//                    tempStatus = testUser.getOnlineStatus();
+//                }
+//            }
+//        });
+//        Log.i("Main A status",tempStatus);
     }
 
-//    @Override
-//    protected void onStop() {
-//        setOnlineStatus(false);
-//        super.onStop();
-//    }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        setOnlineStatus(true);
-//    }
-//
-//    @Override
-//    protected void onRestart() {
-//        super.onRestart();
-//        setOnlineStatus(true);
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        setOnlineStatus(false);
-//        super.onPause();
-//    }
+    @Override
+    protected void onStop() {
+        setOnlineStatus(false);
+        super.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setOnlineStatus(true);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        setOnlineStatus(true);
+    }
+
+    @Override
+    protected void onPause() {
+        setOnlineStatus(false);
+        super.onPause();
+    }
 
     @Override
     protected void onDestroy() {
-        setOnlineStatus("Offline");
+        setOnlineStatus(false);
         super.onDestroy();
     }
 
@@ -186,7 +186,9 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
         Toast.makeText(this, "Notification permission already granted", Toast.LENGTH_SHORT).show();
         }
     }
-    void setOnlineStatus(String onlineStatus){
-        FirebaseUtils.getCurrentUserDetails().update("onlineStatus",onlineStatus);
+
+    void setOnlineStatus(boolean isOnline){
+        AndroidUtils.setOnlineStatus(isOnline);
     }
+
 }

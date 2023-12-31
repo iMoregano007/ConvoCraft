@@ -24,6 +24,8 @@ public class UserDetails extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_details);
+
+        setOnlineStatus(true);
         usernameToolbar = findViewById(R.id.userDetails_username);
         mainUsername = findViewById(R.id.userDetail_Username2);
         mobile = findViewById(R.id.userDetail_mobile);
@@ -34,6 +36,13 @@ public class UserDetails extends AppCompatActivity {
         UserModel otherUser = AndroidUtils.getUserModelFromIntent(getIntent());
         updateDetails(otherUser);
     }
+
+    @Override
+    protected void onDestroy() {
+        setOnlineStatus(false);
+        super.onDestroy();
+    }
+
     void updateDetails(UserModel otherUser){
         usernameToolbar.setText(otherUser.getUserName());
         mainUsername.setText(otherUser.getUserName());
@@ -55,4 +64,9 @@ public class UserDetails extends AppCompatActivity {
 
         });
     }
+
+    void setOnlineStatus(boolean isOnline){
+        AndroidUtils.setOnlineStatus(isOnline);
+    }
+
 }

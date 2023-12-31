@@ -7,7 +7,7 @@
         android:layout_width="52dp"
         android:layout_height="52dp"
         android:src="@drawable/user_icon"
-        android:padding="4dp"
+        android:padding="1dp"
         android:id="@+id/user_profile_picture"
         android:backgroundTint="@color/off_white"
         android:background="@drawable/circular_bg"

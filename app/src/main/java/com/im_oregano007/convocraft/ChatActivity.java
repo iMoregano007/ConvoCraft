@@ -73,6 +73,8 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        setOnlineStatus(true);
         otherUser = AndroidUtils.getUserModelFromIntent(getIntent());
         chatroomID = FirebaseUtils.getChatroomId(FirebaseUtils.currentUserId(),otherUser.getUserId());
 //        online status
@@ -144,6 +146,12 @@ public class ChatActivity extends AppCompatActivity {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        setOnlineStatus(false);
+        super.onDestroy();
     }
 
     void setUpRecyclerView(){
@@ -286,4 +294,9 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
     }
+
+    void setOnlineStatus(boolean isOnline){
+        AndroidUtils.setOnlineStatus(isOnline);
+    }
+
 }

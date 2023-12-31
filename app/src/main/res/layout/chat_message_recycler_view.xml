@@ -4,50 +4,68 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:padding="8dp"
-    android:background="@color/background">
+    >
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/edit_text_rounded"
-        android:backgroundTint="@color/message_receiver"
-        android:padding="8dp"
         android:layout_marginEnd="80dp"
         android:orientation="vertical"
         android:id="@+id/left_message_layout">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="start"
+
             android:textColor="@color/white"
-            android:textSize="18sp"
+            android:background="@drawable/left_chat_bg"
+            android:padding="12dp"
+            android:textSize="16sp"
             tools:text="hello guys"
             android:id="@+id/left_chat_textv"/>
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
-            tools:text="10:00"
-            android:textColor="@color/white"
-            android:layout_gravity="end"
-            android:id="@+id/left_chat_timestamp"/>
+            android:layout_margin="2dp"
+            android:layout_gravity="start"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                tools:text="new"
+                android:textColor="#8FDA7721"
+                android:layout_gravity="end"
+                android:id="@+id/msg_status"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                android:padding="1dp"
+                tools:text="10:00"
+                android:layout_marginStart="2dp"
+                android:textColor="@color/timeStampC"
+                android:layout_gravity="end"
+                android:id="@+id/left_chat_timestamp"/>
+
+        </LinearLayout>
     </LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/edit_text_rounded"
-        android:backgroundTint="@color/message_sender"
-        android:padding="8dp"
         android:layout_marginStart="80dp"
         android:layout_alignParentEnd="true"
         android:orientation="vertical"
         android:id="@+id/right_message_layout">
         <TextView
+            android:layout_gravity="end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:textSize="18sp"
+            android:textSize="16sp"
             tools:text="hello guys"
-
+            android:padding="12dp"
+            android:background="@drawable/right_chat_bg"
             android:id="@+id/right_chat_textv"/>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -60,16 +78,17 @@
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
                 tools:text="sent"
-                android:textColor="@color/my_primary"
+                android:textColor="@color/message_seenS"
                 android:layout_gravity="end"
                 android:id="@+id/seen_status"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
+                android:textSize="10sp"
+                android:padding="1dp"
                 tools:text="10:00"
                 android:layout_marginStart="2dp"
-                android:textColor="@color/white"
+                android:textColor="@color/timeStampC"
                 android:layout_gravity="end"
                 android:id="@+id/right_chat_timestamp"/>
 

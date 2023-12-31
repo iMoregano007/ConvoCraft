@@ -5,12 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ChatActivity"
-    android:background="@color/background">
+    android:background="@color/background"
+    >
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/my_primary"
+        android:background="@color/secondary_test"
         android:padding="10dp"
         android:id="@+id/toolbar">
         <LinearLayout
@@ -62,25 +63,35 @@
             android:layout_marginStart="10dp"
             />
     </RelativeLayout>
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@id/toolbar"
+        android:id="@+id/divider"/>
     
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/toolbar"
-        android:layout_above="@id/message_frame"
+        android:layout_below="@id/divider"
+        android:layout_above="@id/divider2"
         android:id="@+id/chat_recycler_view"
         />
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_above="@id/message_frame"
+        android:id="@+id/divider2"/>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:padding="8dp"
+        android:layout_height="76dp"
         android:id="@+id/message_frame"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        >
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Write Message here"
-            android:background="@drawable/edit_text_rounded"
+            android:background="@drawable/input_message_bg"
             android:id="@+id/input_message"
             android:elevation="4dp"
             android:padding="10dp"
@@ -96,7 +107,7 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_alignParentEnd="true"
             android:id="@+id/message_send_btn"
-            app:tint="@color/my_primary"
+            app:tint="@color/off_white"
             android:layout_marginStart="10dp"
             android:padding="8dp"
             android:layout_centerInParent="true"

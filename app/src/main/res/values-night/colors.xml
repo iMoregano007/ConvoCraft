@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="editTextBg">#262B31</color>
+    <color name="timeStampC">#FAFAFA</color>
+    <color name="background">#262B31</color>
+    <color name="message_seenS">#B97EDD28</color>
 </resources>

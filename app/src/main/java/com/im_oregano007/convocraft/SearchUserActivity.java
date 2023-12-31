@@ -15,6 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.im_oregano007.convocraft.adapters.SearchUserRecyclerAdapter;
 import com.im_oregano007.convocraft.model.UserModel;
+import com.im_oregano007.convocraft.utils.AndroidUtils;
 import com.im_oregano007.convocraft.utils.FirebaseUtils;
 
 public class SearchUserActivity extends AppCompatActivity {
@@ -34,6 +35,7 @@ public class SearchUserActivity extends AppCompatActivity {
         searchUserBtn = findViewById(R.id.search_user_btn);
         backBtn = findViewById(R.id.back_button);
         recyclerView = findViewById(R.id.search_user_recycler_view);
+        setOnlineStatus(true);
 
         inputSearch.requestFocus();
 
@@ -96,4 +98,15 @@ public class SearchUserActivity extends AppCompatActivity {
             adapter.startListening();
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        setOnlineStatus(false);
+        super.onDestroy();
+    }
+
+    void setOnlineStatus(boolean isOnline){
+        AndroidUtils.setOnlineStatus(isOnline);
+    }
+
 }

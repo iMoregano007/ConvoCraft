@@ -40,4 +40,14 @@ public class AndroidUtils {
     public static void setProfilePic(Context context, Uri imageUri, ImageView imageView){
         Glide.with(context).load(imageUri).apply(RequestOptions.circleCropTransform()).into(imageView);
     }
+
+    public static void setOnlineStatus(boolean isOnline){
+        if(isOnline){
+            FirebaseUtils.getCurrentUserDetails().update("onlineStatus","online");
+        } else {
+            FirebaseUtils.getCurrentUserDetails().update("onlineStatus","offline");
+
+        }
+
+    }
 }
