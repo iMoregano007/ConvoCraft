@@ -34,39 +34,64 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
 
     @Override
     protected void onBindViewHolder(@NonNull ChatroomModelViewHolder holder, int position, @NonNull ChatroomModel model) {
-        FirebaseUtils.getOtherUserFromChatroom(model.getUserIds())
-                .get().addOnCompleteListener(task -> {
-                    if(task.isSuccessful()){
-                        boolean lastMsgSentByMe = model.getLastMessageSenderId().equals(FirebaseUtils.currentUserId());
-                        UserModel otherUser = task.getResult().toObject(UserModel.class);
-                        if(otherUser.getUserId().equals(FirebaseUtils.currentUserId())){
-                            holder.usernameTextV.setText(otherUser.getUserName()+" (Me)");
-                        } else {
-                            holder.usernameTextV.setText(otherUser.getUserName());
-                        }
 
-                        FirebaseUtils.getOtherUserProfilePicStorageRef(otherUser.getUserId()).getDownloadUrl().addOnCompleteListener(t -> {
-                            if(t.isSuccessful()){
-                                Uri imageUri = t.getResult();
-                                AndroidUtils.setProfilePic(context,imageUri,holder.profilePic);
+        if(model.isGroup()){
+            if(AndroidUtils.isUserFromGroup(FirebaseUtils.currentUserId(),model.getUserIds())){
+                holder.usernameTextV.setText(model.getGroupName());
+            }
+
+        } else {
+            FirebaseUtils.getOtherUserFromChatroom(model.getUserIds())
+                    .get().addOnCompleteListener(task -> {
+                        if(task.isSuccessful()){
+
+                            UserModel otherUser = task.getResult().toObject(UserModel.class);
+                            if(otherUser.getUserId().equals(FirebaseUtils.currentUserId())){
+                                holder.usernameTextV.setText(otherUser.getUserName()+" (Me)");
+                            } else {
+                                holder.usernameTextV.setText(otherUser.getUserName());
                             }
 
-                        });
-                        if(lastMsgSentByMe){
-                            holder.lastMessageTextV.setText("You : "+model.getLastMessage());
-                        } else
-                            holder.lastMessageTextV.setText(model.getLastMessage());
-                        holder.lastMessageTimeTextV.setText(FirebaseUtils.timestampToString(model.getLastMessageTimeStamp()));
+                            FirebaseUtils.getOtherUserProfilePicStorageRef(otherUser.getUserId()).getDownloadUrl().addOnCompleteListener(t -> {
+                                if(t.isSuccessful()){
+                                    Uri imageUri = t.getResult();
+                                    AndroidUtils.setProfilePic(context,imageUri,holder.profilePic);
+                                }
 
-                        holder.itemView.setOnClickListener(v -> {
+                            });
+
+                            holder.itemView.setOnClickListener(v -> {
 //            move to chat activity
-                            Intent intent = new Intent(context, ChatActivity.class);
-                            AndroidUtils.passUserModelAsIntent(intent, otherUser);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            context.startActivity(intent);
-                        });
-                    }
-                });
+                                Intent intent = new Intent(context, ChatActivity.class);
+                                AndroidUtils.passUserModelAsIntent(intent, otherUser);
+                                intent.putExtra("chatroomID",model.getChatroomId());
+                                intent.putExtra("isGroupChat",model.isGroup());
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                context.startActivity(intent);
+                            });
+
+                        }
+                    });
+        }
+
+        boolean lastMsgSentByMe = model.getLastMessageSenderId().equals(FirebaseUtils.currentUserId());
+
+        if(lastMsgSentByMe){
+            holder.lastMessageTextV.setText("You : "+model.getLastMessage());
+        } else
+            holder.lastMessageTextV.setText(model.getLastMessage());
+        holder.lastMessageTimeTextV.setText(FirebaseUtils.timestampToString(model.getLastMessageTimeStamp()));
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ChatActivity.class);
+            intent.putExtra("chatroomID",model.getChatroomId());
+            intent.putExtra("isGroupChat",model.isGroup());
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        });
+
+
+
     }
 
     @NonNull

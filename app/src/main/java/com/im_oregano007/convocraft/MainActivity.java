@@ -30,7 +30,7 @@ import com.im_oregano007.convocraft.utils.FirebaseUtils;
 public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
-    ImageButton searchBtn;
+    ImageButton searchBtn, createGroup;
     ChatFragment chatFragment;
     AiCornerFragment aiCornerFragment;
     ProfileFragment profileFragment;
@@ -51,6 +51,7 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
         profileFragment = new ProfileFragment();
         bottomNavigationView = findViewById(R.id.main_navigation_view);
         searchBtn = findViewById(R.id.search_button);
+        createGroup = findViewById(R.id.create_group);
 
         setOnlineStatus(true);
 
@@ -61,6 +62,9 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
 
         searchBtn.setOnClickListener((v) ->{
             startActivity(new Intent(MainActivity.this,SearchUserActivity.class));
+        });
+        createGroup.setOnClickListener( (v) -> {
+            startActivity(new Intent(MainActivity.this,CreateGroup.class));
         });
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {

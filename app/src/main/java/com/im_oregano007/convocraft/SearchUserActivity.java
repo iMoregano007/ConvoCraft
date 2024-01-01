@@ -37,7 +37,9 @@ public class SearchUserActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.search_user_recycler_view);
         setOnlineStatus(true);
 
-        inputSearch.requestFocus();
+//        inputSearch.requestFocus();
+
+        setupSearchRecyclerView(" ", true);
 
 
         backBtn.setOnClickListener(new View.OnClickListener() {
@@ -54,17 +56,25 @@ public class SearchUserActivity extends AppCompatActivity {
                 inputSearch.setError("Invalid Username");
                 return;
             }
-            setupSearchRecyclerView(searchTerm);
+            setupSearchRecyclerView(searchTerm, false);
         });
 
 
     }
 
-    void setupSearchRecyclerView(String searchTerm){
-
-        Query query = FirebaseUtils.allUsersCollectionReference()
-                .whereGreaterThanOrEqualTo("userName",searchTerm)
-                .whereLessThanOrEqualTo("userName",searchTerm+'\uf8ff');
+    void setupSearchRecyclerView(String searchTerm, boolean firstTime){
+        Query query;
+        if(firstTime){
+            query = FirebaseUtils.allUsersCollectionReference()
+                    .whereGreaterThanOrEqualTo("userName",searchTerm);
+        } else {
+            query = FirebaseUtils.allUsersCollectionReference()
+                    .whereGreaterThanOrEqualTo("userName",searchTerm)
+                    .whereLessThanOrEqualTo("userName",searchTerm+'\uf8ff');
+        }
+//        Query query = FirebaseUtils.allUsersCollectionReference()
+//                .whereGreaterThanOrEqualTo("userName",searchTerm)
+//                .whereLessThanOrEqualTo("userName",searchTerm+'\uf8ff');
 
         FirestoreRecyclerOptions<UserModel> options = new FirestoreRecyclerOptions.Builder<UserModel>()
                 .setQuery(query,UserModel.class).build();

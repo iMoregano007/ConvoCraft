@@ -68,16 +68,16 @@ public class ChatActivity extends AppCompatActivity {
     LinearLayout otherUserDetails;
 
     boolean cameFromSearchUser;
+//    group chat feature
+    ChatroomModel groupChatroom;
+    boolean groupChat;
+    String groupName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        setOnlineStatus(true);
-        otherUser = AndroidUtils.getUserModelFromIntent(getIntent());
-        chatroomID = FirebaseUtils.getChatroomId(FirebaseUtils.currentUserId(),otherUser.getUserId());
-//        online status
         otherUsername = findViewById(R.id.other_username);
         backBtn = findViewById(R.id.back_button);
         messageSendBtn = findViewById(R.id.message_send_btn);
@@ -88,16 +88,73 @@ public class ChatActivity extends AppCompatActivity {
 
         profilePic = findViewById(R.id.user_profile_picture);
 
+        setOnlineStatus(true);
+        chatroomID = getIntent().getStringExtra("chatroomID");
+        groupChat = getIntent().getBooleanExtra("isGroupChat",false);
+        if(chatroomID != null){
+            FirebaseUtils.getChatroomReference(chatroomID).get().addOnCompleteListener(task -> {
+                if(task.isSuccessful()){
+                    groupChatroom = task.getResult().toObject(ChatroomModel.class);
+                    groupName = groupChatroom.getGroupName();
+                    if(groupChat){
+                        if(groupName != null){
+                            otherUsername.setText(groupChatroom.getGroupName());
+                        } else {
+                            otherUsername.setText("GroupChat");
+                        }
+
+                        activeStatus.setVisibility(View.INVISIBLE);
+                        otherUserDetails.setEnabled(false);
+                    }
+
+                }
+            });
+        }
+
+
+
+
+         if(!groupChat){
+             otherUser = AndroidUtils.getUserModelFromIntent(getIntent());
+//             set profile pic of other user
+             FirebaseUtils.getOtherUserProfilePicStorageRef(otherUser.getUserId()).getDownloadUrl().addOnCompleteListener(t -> {
+                 if(t.isSuccessful()){
+                     Uri imageUri = t.getResult();
+                     AndroidUtils.setProfilePic(this,imageUri,profilePic);
+                 }
+
+             });
+
+             otherUsername.setText(otherUser.getUserName());
+//        online status
+             if(otherUser.getOnlineStatus()!= null){
+                 activeStatus.setText(otherUser.getOnlineStatus());
+             } else {
+                 activeStatus.setText("Offline");
+             }
+
+             if(FirebaseUtils.currentUserId().equals(otherUser.getUserId())){
+                 otherUsername.setText(otherUser.getUserName()+" (Me)");
+             } else{
+                 otherUsername.setText(otherUser.getUserName());
+             }
+
+
+             otherUserDetails.setOnClickListener(v -> {
+                 Intent intent = new Intent(this, UserDetails.class);
+                 AndroidUtils.passUserModelAsIntent(intent, otherUser);
+                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                 startActivity(intent);
+             });
+         }
+
+//        chatroomID = FirebaseUtils.getChatroomId(FirebaseUtils.currentUserId(),otherUser.getUserId());
+//        online status
+
+
 //        trying to solve bug
         cameFromSearchUser = getIntent().getBooleanExtra("cameFromSearchSection",false);
 
-        FirebaseUtils.getOtherUserProfilePicStorageRef(otherUser.getUserId()).getDownloadUrl().addOnCompleteListener(t -> {
-            if(t.isSuccessful()){
-                Uri imageUri = t.getResult();
-                AndroidUtils.setProfilePic(this,imageUri,profilePic);
-            }
-
-        });
 
 //        onBackPressed alternative code working partially part 1
 
@@ -114,19 +171,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
 
-        otherUsername.setText(otherUser.getUserName());
-//        online status
-        if(otherUser.getOnlineStatus()!= null){
-            activeStatus.setText(otherUser.getOnlineStatus());
-        } else {
-            activeStatus.setText("Offline");
-        }
 
-        if(FirebaseUtils.currentUserId().equals(otherUser.getUserId())){
-            otherUsername.setText(otherUser.getUserName()+" (Me)");
-        } else{
-            otherUsername.setText(otherUser.getUserName());
-        }
 
         getOrCreateChatroomModel();
 
@@ -140,12 +185,7 @@ public class ChatActivity extends AppCompatActivity {
         setUpRecyclerView();
 
 //        trying to show OtherUser profile
-        otherUserDetails.setOnClickListener(v -> {
-            Intent intent = new Intent(this, UserDetails.class);
-            AndroidUtils.passUserModelAsIntent(intent, otherUser);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-        });
+
     }
 
     @Override
@@ -232,7 +272,9 @@ public class ChatActivity extends AppCompatActivity {
                             chatroomID,
                             Timestamp.now(),
                             Arrays.asList(FirebaseUtils.currentUserId(),otherUser.getUserId()),
-                            ""
+                            "",
+                            "",
+                            false
 
                     );
 
