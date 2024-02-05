@@ -15,6 +15,16 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/other_username"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="OtherUser"
+            android:visibility="gone"
+            android:textColor="@color/my_primary"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="start"
 
             android:textColor="@color/white"

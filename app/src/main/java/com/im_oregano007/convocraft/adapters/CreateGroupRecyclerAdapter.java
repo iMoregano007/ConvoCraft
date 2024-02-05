@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,6 +34,7 @@ public class CreateGroupRecyclerAdapter extends FirestoreRecyclerAdapter<UserMod
 
 
         if(!model.getUserId().equals(FirebaseUtils.currentUserId())){
+            holder.userRow.setVisibility(View.VISIBLE);
             holder.usernameTextV.setText(model.getUserName());
             holder.phoneTextV.setText(model.getPhone());
             FirebaseUtils.getOtherUserProfilePicStorageRef(model.getUserId()).getDownloadUrl().addOnCompleteListener(t -> {
@@ -42,6 +44,8 @@ public class CreateGroupRecyclerAdapter extends FirestoreRecyclerAdapter<UserMod
                 }
 
             });
+        } else {
+            holder.userRow.setVisibility(View.GONE);
         }
 
 
@@ -65,6 +69,7 @@ public class CreateGroupRecyclerAdapter extends FirestoreRecyclerAdapter<UserMod
     class UserModelViewHolder extends RecyclerView.ViewHolder{
 
         TextView usernameTextV, phoneTextV;
+        LinearLayout userRow;
         ImageView profilePic, selectSign;
         public UserModelViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -72,6 +77,7 @@ public class CreateGroupRecyclerAdapter extends FirestoreRecyclerAdapter<UserMod
             phoneTextV = itemView.findViewById(R.id.phone_text);
             profilePic = itemView.findViewById(R.id.user_profile_picture);
             selectSign = itemView.findViewById(R.id.select_sign);
+            userRow = itemView.findViewById(R.id.user_row);
         }
     }
 }

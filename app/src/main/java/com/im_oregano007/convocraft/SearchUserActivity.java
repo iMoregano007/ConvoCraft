@@ -109,11 +109,12 @@ public class SearchUserActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        setOnlineStatus(false);
-        super.onDestroy();
-    }
+//      trying to solve a prblm
+//    @Override
+//    protected void onDestroy() {
+//        setOnlineStatus(false);
+//        super.onDestroy();
+//    }
 
     void setOnlineStatus(boolean isOnline){
         AndroidUtils.setOnlineStatus(isOnline);

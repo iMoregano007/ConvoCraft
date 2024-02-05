@@ -13,4 +13,6 @@
     <color name="bg_test1">#1B1A1C</color>
     <color name="secondary_test">#292d34</color>
     <color name="timeStampC">#3C3C3C</color>
+
+    <color name="shimmer_effect_color">#DDDDDD</color>
 </resources>

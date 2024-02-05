@@ -60,18 +60,15 @@ public class ChatActivity extends AppCompatActivity {
     RecyclerView chatRecyclerView;
 
     ImageView profilePic;
-//    seenStatus applying code
     String currentMsgId;
-//    trying to add active status
     TextView activeStatus;
 
     LinearLayout otherUserDetails;
 
     boolean cameFromSearchUser;
-//    group chat feature
     ChatroomModel groupChatroom;
     boolean groupChat;
-    String groupName;
+    String groupName = "GroupChat";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,12 +94,7 @@ public class ChatActivity extends AppCompatActivity {
                     groupChatroom = task.getResult().toObject(ChatroomModel.class);
                     groupName = groupChatroom.getGroupName();
                     if(groupChat){
-                        if(groupName != null){
-                            otherUsername.setText(groupChatroom.getGroupName());
-                        } else {
-                            otherUsername.setText("GroupChat");
-                        }
-
+                        otherUsername.setText(groupChatroom.getGroupName());
                         activeStatus.setVisibility(View.INVISIBLE);
                         otherUserDetails.setEnabled(false);
                     }
@@ -148,15 +140,11 @@ public class ChatActivity extends AppCompatActivity {
              });
          }
 
-//        chatroomID = FirebaseUtils.getChatroomId(FirebaseUtils.currentUserId(),otherUser.getUserId());
-//        online status
 
-
-//        trying to solve bug
         cameFromSearchUser = getIntent().getBooleanExtra("cameFromSearchSection",false);
 
 
-//        onBackPressed alternative code working partially part 1
+
 
 
         backBtn.setOnClickListener(new View.OnClickListener() {
@@ -184,15 +172,10 @@ public class ChatActivity extends AppCompatActivity {
 
         setUpRecyclerView();
 
-//        trying to show OtherUser profile
+
 
     }
 
-    @Override
-    protected void onDestroy() {
-        setOnlineStatus(false);
-        super.onDestroy();
-    }
 
     void setUpRecyclerView(){
         Query query = FirebaseUtils.getChatroomMessageReference(chatroomID)
@@ -226,7 +209,7 @@ public class ChatActivity extends AppCompatActivity {
         FirebaseUtils.getChatroomReference(chatroomID).set(chatroomModel);
 
 
-        ChatMessageModel chatMessageModel = new ChatMessageModel(message,FirebaseUtils.currentUserId(),Timestamp.now(),"sent","");
+        ChatMessageModel chatMessageModel = new ChatMessageModel(message,FirebaseUtils.currentUserId(),Timestamp.now(),"sent","",chatroomID,groupChat);
         FirebaseUtils.getChatroomMessageReference(chatroomID).add(chatMessageModel).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
@@ -234,25 +217,32 @@ public class ChatActivity extends AppCompatActivity {
                     currentMsgId = task.getResult().getId();
                     FirebaseUtils.getChatroomMessageReference(chatroomID).document(currentMsgId).update("msgId",currentMsgId);
                     inputMessage.setText("");
-                    sendNotification(message);
+                    sendNotificationToUsers(message);
                 }
             }
         });
 
-//      here is a problem with the seen status yet to be rectified later
 
-//        FirebaseUtils.getChatroomMessageReference(chatroomID).document(currentMsgId).update("msgId",currentMsgId).addOnCompleteListener(new OnCompleteListener<Void>() {
-//            @Override
-//            public void onComplete(@NonNull Task<Void> task) {
-//                if(task.isSuccessful()){
-//                    inputMessage.setText("");
-//                    sendNotification(message);
-//                }
-//            }
-//        });
 
     }
-//    trying to solve bug
+//   send notification to all members(group members)
+    void sendNotificationToUsers(String nMessage){
+
+        int numberOfUsers = chatroomModel.getUserIds().size();
+        for(int i = 0; i < numberOfUsers; i++){
+            FirebaseUtils.allUsersCollectionReference().document(chatroomModel.getUserIds().get(i))
+                    .get().addOnCompleteListener(task -> {
+                        if(task.isSuccessful()){
+                            UserModel user = task.getResult().toObject(UserModel.class);
+                            if(user.getUserId()!=FirebaseUtils.currentUserId()){
+                                sendNotification(nMessage,user.getFcmToken());
+                            }
+                        }
+            });
+
+        }
+    }
+
     void onBackBtnClick(){
         if(cameFromSearchUser){
                 Intent mainIntent = new Intent(this, MainActivity.class);
@@ -284,15 +274,21 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    void sendNotification(String message){
+    void sendNotification(String message, String fcmToken){
         FirebaseUtils.getCurrentUserDetails().get().addOnCompleteListener(task -> {
             if(task.isSuccessful()){
                 UserModel currentUser = task.getResult().toObject(UserModel.class);
+                String title;
+                if(groupChat){
+                    title = currentUser.getUserName() +"("+groupName+")";
+                } else {
+                    title = currentUser.getUserName();
+                }
                 try{
                     JSONObject jsonObject = new JSONObject();
 
                     JSONObject notificationObj = new JSONObject();
-                    notificationObj.put("title",currentUser.getUserName());
+                    notificationObj.put("title",title);
                     notificationObj.put("body",message);
 
                     JSONObject dataObj = new JSONObject();
@@ -300,7 +296,7 @@ public class ChatActivity extends AppCompatActivity {
 
                     jsonObject.put("notification",notificationObj);
                     jsonObject.put("data",dataObj);
-                    jsonObject.put("to",otherUser.getFcmToken());
+                    jsonObject.put("to",fcmToken);
 
                     callApis(jsonObject);
 

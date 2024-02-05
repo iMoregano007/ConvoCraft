@@ -100,11 +100,11 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
 //        Log.i("Main A status",tempStatus);
     }
 
-    @Override
-    protected void onStop() {
-        setOnlineStatus(false);
-        super.onStop();
-    }
+//    @Override
+//    protected void onStop() {
+//        setOnlineStatus(false);
+//        super.onStop();
+//    }
 
     @Override
     protected void onResume() {
@@ -118,11 +118,11 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
         setOnlineStatus(true);
     }
 
-    @Override
-    protected void onPause() {
-        setOnlineStatus(false);
-        super.onPause();
-    }
+//    @Override
+//    protected void onPause() {
+//        setOnlineStatus(false);
+//        super.onPause();
+//    }
 
     @Override
     protected void onDestroy() {

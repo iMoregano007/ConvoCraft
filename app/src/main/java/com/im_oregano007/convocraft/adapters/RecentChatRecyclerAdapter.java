@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.im_oregano007.convocraft.ChatActivity;
 import com.im_oregano007.convocraft.R;
+import com.im_oregano007.convocraft.model.ChatMessageModel;
 import com.im_oregano007.convocraft.model.ChatroomModel;
 import com.im_oregano007.convocraft.model.UserModel;
 import com.im_oregano007.convocraft.utils.AndroidUtils;
@@ -73,7 +74,7 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
                         }
                     });
         }
-
+//change last message setting implementation
         boolean lastMsgSentByMe = model.getLastMessageSenderId().equals(FirebaseUtils.currentUserId());
 
         if(lastMsgSentByMe){
@@ -103,13 +104,14 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
 
     class ChatroomModelViewHolder extends RecyclerView.ViewHolder{
 
-        TextView usernameTextV, lastMessageTextV, lastMessageTimeTextV;
+        TextView usernameTextV, lastMessageTextV, lastMessageTimeTextV, lastMessageSeenStatus;
         ImageView profilePic;
         public ChatroomModelViewHolder(@NonNull View itemView) {
             super(itemView);
             usernameTextV = itemView.findViewById(R.id.username_text);
             lastMessageTextV = itemView.findViewById(R.id.last_message_text);
             lastMessageTimeTextV = itemView.findViewById(R.id.last_msg_time_text);
+            lastMessageSeenStatus = itemView.findViewById(R.id.last_msg_seenStatus);
             profilePic = itemView.findViewById(R.id.user_profile_picture);
         }
     }

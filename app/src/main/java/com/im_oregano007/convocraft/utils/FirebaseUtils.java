@@ -1,9 +1,11 @@
 package com.im_oregano007.convocraft.utils;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -12,6 +14,7 @@ import com.im_oregano007.convocraft.model.UserModel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class FirebaseUtils {
 
@@ -83,6 +86,22 @@ public class FirebaseUtils {
         return FirebaseStorage.getInstance().getReference()
                 .child("profile_pic").child(otherUserID);
     }
+
+
+//    public static String getFCMTokenOfUsers(String userId){
+//        AtomicReference<String> token;
+//        allUsersCollectionReference().document(userId).get().addOnCompleteListener((OnCompleteListener<DocumentSnapshot>) task -> {
+//            if(task.isSuccessful());
+//            UserModel userM = task.getResult().toObject(UserModel.class);
+//            token.set(userM.getFcmToken());
+//            return token;
+//
+//        });
+//
+//
+//
+//        return "";
+//    }
 
 
 }

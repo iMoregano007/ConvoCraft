@@ -10,15 +10,21 @@ public class ChatMessageModel {
 
     private String msgId;
 
+    private String chatroomID;
+
+    private boolean isGroup;
+
     public ChatMessageModel() {
     }
 
-    public ChatMessageModel(String message, String senderId, Timestamp timestamp, String seenStatus, String msgId) {
+    public ChatMessageModel(String message, String senderId, Timestamp timestamp, String seenStatus, String msgId, String chatroomID, boolean isGroup) {
         this.message = message;
         this.senderId = senderId;
         this.timestamp = timestamp;
         this.seenStatus = seenStatus;
         this.msgId = msgId;
+        this.chatroomID = chatroomID;
+        this.isGroup = isGroup;
     }
 
     public String getMessage() {
@@ -59,5 +65,21 @@ public class ChatMessageModel {
 
     public void setMsgId(String msgId) {
         this.msgId = msgId;
+    }
+
+    public String getChatroomID() {
+        return chatroomID;
+    }
+
+    public void setChatroomID(String chatroomID) {
+        this.chatroomID = chatroomID;
+    }
+
+    public boolean isGroup() {
+        return isGroup;
+    }
+
+    public void setGroup(boolean group) {
+        isGroup = group;
     }
 }

@@ -11,15 +11,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -45,6 +48,8 @@ public class ProfileFragment extends Fragment {
     String oldUsername;
     ActivityResultLauncher<Intent> imagePicLauncher;
     Uri selectedImageUri;
+    ShimmerFrameLayout shimmerFrameLayout;
+    LinearLayout dataView;
 
 
     public ProfileFragment() {
@@ -77,6 +82,9 @@ public class ProfileFragment extends Fragment {
         progressBar = view.findViewById(R.id.profile_progress_bar);
         logoutBtn = view.findViewById(R.id.logout_btn);
         updateProfileBtn = view.findViewById(R.id.profile_update_btn);
+        shimmerFrameLayout = view.findViewById(R.id.shimmer_effect_profile);
+        dataView = view.findViewById(R.id.data_view);
+        dataView.setVisibility(View.INVISIBLE);
 
         getUserData();
 
@@ -155,6 +163,8 @@ public class ProfileFragment extends Fragment {
     }
 
     void getUserData(){
+        hideShimmerEffect();
+
         FirebaseUtils.getCurrentProfilePicStorageRef().getDownloadUrl().addOnCompleteListener(task -> {
             if(task.isSuccessful()){
                 Uri imageUri = task.getResult();
@@ -184,5 +194,16 @@ public class ProfileFragment extends Fragment {
             progressBar.setVisibility(View.INVISIBLE);
             updateProfileBtn.setVisibility(View.VISIBLE);
         }
+    }
+
+    void hideShimmerEffect(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                dataView.setVisibility(View.VISIBLE);
+                shimmerFrameLayout.setVisibility(View.GONE);
+            }
+        },500);
+
     }
 }

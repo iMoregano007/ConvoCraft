@@ -8,9 +8,13 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
+import com.im_oregano007.convocraft.model.ChatroomModel;
 import com.im_oregano007.convocraft.model.UserModel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AndroidUtils {
@@ -76,4 +80,32 @@ public class AndroidUtils {
 
         return false;
     }
+
+//    get or create chatroom reference
+    public static String getOrCreateChatroomModel(String otherUserId){
+        String chatroomID = FirebaseUtils.getChatroomId(FirebaseUtils.currentUserId(),otherUserId);
+
+        FirebaseUtils.getChatroomReference(chatroomID).get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                ChatroomModel chatroomModel;
+                chatroomModel = task.getResult().toObject(ChatroomModel.class);
+                if(chatroomModel==null){
+                    chatroomModel = new ChatroomModel(
+                            chatroomID,
+                            Timestamp.now(),
+                            Arrays.asList(FirebaseUtils.currentUserId(),otherUserId),
+                            "",
+                            "",
+                            false
+
+                    );
+
+                    FirebaseUtils.getChatroomReference(chatroomID).set(chatroomModel);
+                }
+            }
+        });
+
+        return chatroomID;
+    }
+
 }

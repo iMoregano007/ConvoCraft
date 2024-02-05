@@ -48,7 +48,9 @@ public class SearchUserRecyclerAdapter extends FirestoreRecyclerAdapter<UserMode
         holder.itemView.setOnClickListener(v -> {
 //            move to chat activity
             Intent intent = new Intent(context, ChatActivity.class);
+            String chatroomId = AndroidUtils.getOrCreateChatroomModel(model.getUserId());
             AndroidUtils.passUserModelAsIntent(intent, model);
+            intent.putExtra("chatroomID",chatroomId);
             intent.putExtra("cameFromSearchSection",true);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);

@@ -15,9 +15,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.im_oregano007.convocraft.ChatActivity;
 import com.im_oregano007.convocraft.R;
 import com.im_oregano007.convocraft.model.ChatMessageModel;
+import com.im_oregano007.convocraft.model.UserModel;
 import com.im_oregano007.convocraft.utils.AndroidUtils;
 import com.im_oregano007.convocraft.utils.FirebaseUtils;
 
@@ -32,6 +36,11 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
     @Override
     protected void onBindViewHolder(@NonNull ChatModelViewHolder holder, int position, @NonNull ChatMessageModel model) {
 //        can set timestamp as well from here
+        String chatroomID = model.getChatroomID();
+        boolean isGroup = model.isGroup();
+        if( chatroomID == null ||chatroomID.isEmpty()){
+            chatroomID = FirebaseUtils.getChatroomId(FirebaseUtils.currentUserId(),model.getSenderId());
+        }
         String seenS = model.getSeenStatus();
         if(model.getSenderId().equals(FirebaseUtils.currentUserId())){
             holder.leftChatLayout.setVisibility(View.GONE);
@@ -44,6 +53,20 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
                 holder.seenStatus.setText(seenS);
             }
         } else {
+            if(isGroup){
+                holder.otherUserName.setVisibility(View.VISIBLE);
+                FirebaseUtils.allUsersCollectionReference().document(model.getSenderId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()){
+                            UserModel otherUser = task.getResult().toObject(UserModel.class);
+                            holder.otherUserName.setText(otherUser.getUserName());
+                        }
+                    }
+                });
+            } else {
+                holder.otherUserName.setVisibility(View.GONE);
+            }
             holder.rightChatLayout.setVisibility(View.GONE);
             holder.leftChatLayout.setVisibility(View.VISIBLE);
             holder.leftChatTextV.setText(model.getMessage());
@@ -52,7 +75,7 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
                 holder.msgStatus.setVisibility(View.VISIBLE);
                 holder.msgStatus.setText("new");
                 if(!model.getMsgId().equals("")){
-                    FirebaseUtils.getChatroomMessageReference(FirebaseUtils.getChatroomId(FirebaseUtils.currentUserId(),model.getSenderId())).document(model.getMsgId()).update("seenStatus","seen");
+                    FirebaseUtils.getChatroomMessageReference(chatroomID).document(model.getMsgId()).update("seenStatus","seen");
                 }
             } else {
                 new Handler().postDelayed(new Runnable() {
@@ -75,7 +98,7 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
     class ChatModelViewHolder extends RecyclerView.ViewHolder{
 
         LinearLayout leftChatLayout, rightChatLayout;
-        TextView leftChatTextV, rightChatTextV, leftChatTimestamp, rightChatTimestamp, seenStatus, msgStatus;
+        TextView leftChatTextV, rightChatTextV, leftChatTimestamp, rightChatTimestamp, seenStatus, msgStatus, otherUserName;
         public ChatModelViewHolder(@NonNull View itemView) {
             super(itemView);
             leftChatLayout = itemView.findViewById(R.id.left_message_layout);
@@ -86,6 +109,7 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
             rightChatTimestamp = itemView.findViewById(R.id.right_chat_timestamp);
             seenStatus = itemView.findViewById(R.id.seen_status);
             msgStatus = itemView.findViewById(R.id.msg_status);
+            otherUserName = itemView.findViewById(R.id.other_username);
 
 
         }
