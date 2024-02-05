@@ -108,7 +108,7 @@ public class ChatActivity extends AppCompatActivity {
 
          if(!groupChat){
              otherUser = AndroidUtils.getUserModelFromIntent(getIntent());
-//             set profile pic of other user
+//             set profile pic of the other user
              FirebaseUtils.getOtherUserProfilePicStorageRef(otherUser.getUserId()).getDownloadUrl().addOnCompleteListener(t -> {
                  if(t.isSuccessful()){
                      Uri imageUri = t.getResult();
