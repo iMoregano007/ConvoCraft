@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:padding="8dp"
+    >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="80dp"
+        android:orientation="vertical"
+        android:id="@+id/left_message_layout">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:textIsSelectable="true"
+            android:textColor="@color/white"
+            android:background="@drawable/left_chat_bg"
+            android:padding="12dp"
+            android:textSize="16sp"
+            tools:text="hello guys"
+            android:id="@+id/left_chat_textv"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="80dp"
+        android:layout_alignParentEnd="true"
+        android:orientation="vertical"
+        android:id="@+id/right_message_layout">
+        <TextView
+            android:layout_gravity="end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            tools:text="hello guys"
+            android:padding="12dp"
+            android:background="@drawable/right_chat_bg"
+            android:id="@+id/right_chat_textv"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

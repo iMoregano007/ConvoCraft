@@ -15,6 +15,9 @@
         android:theme="@style/Theme.ConvoCraft"
         tools:targetApi="31">
         <activity
+            android:name=".ChatgptScreen"
+            android:exported="false" />
+        <activity
             android:name=".CreateGroup"
             android:exported="false" />
         <activity
