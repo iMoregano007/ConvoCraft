@@ -48,6 +48,10 @@ public class AndroidUtils {
         Glide.with(context).load(imageUri).apply(RequestOptions.circleCropTransform()).into(imageView);
     }
 
+    public static void setImage(Context context, Uri imageUri, ImageView imageView){
+        Glide.with(context).load(imageUri).apply(RequestOptions.centerCropTransform()).into(imageView);
+    }
+
     public static void setOnlineStatus(boolean isOnline){
         if(isOnline){
             FirebaseUtils.getCurrentUserDetails().update("onlineStatus","online");

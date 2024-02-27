@@ -65,11 +65,18 @@ public class FirebaseUtils {
         }
     }
 
-    public static String timestampToString(Timestamp timestamp){
+    public static String timestampToString(Timestamp timestamp, boolean isRecentChat){
         Date date = timestamp.toDate();
 
         // Format the date in HH:mm format
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat sdf;
+        if(isRecentChat){
+            sdf = new SimpleDateFormat("HH:mm");
+
+        } else{
+            sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+        }
         return sdf.format(date);
 
     }
@@ -80,6 +87,9 @@ public class FirebaseUtils {
     public static StorageReference getCurrentProfilePicStorageRef(){
         return FirebaseStorage.getInstance().getReference()
                 .child("profile_pic").child(FirebaseUtils.currentUserId());
+    }
+    public static StorageReference getImageStorageReference(String chatroomId, String uri){
+        return FirebaseStorage.getInstance().getReference().child("chat_images").child(chatroomId).child(uri);
     }
 
     public static StorageReference getOtherUserProfilePicStorageRef(String otherUserID){

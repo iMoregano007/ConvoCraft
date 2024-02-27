@@ -2,22 +2,29 @@ package com.im_oregano007.convocraft;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
@@ -37,6 +44,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Arrays;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -55,7 +64,7 @@ public class ChatActivity extends AppCompatActivity {
     ChatRecyclerAdapter adapter;
 
     TextView otherUsername;
-    ImageButton backBtn, messageSendBtn;
+    ImageButton backBtn, messageSendBtn, imgSelectBtn;
     EditText inputMessage;
     RecyclerView chatRecyclerView;
 
@@ -69,12 +78,35 @@ public class ChatActivity extends AppCompatActivity {
     ChatroomModel groupChatroom;
     boolean groupChat;
     String groupName = "GroupChat";
+//p1
+    ActivityResultLauncher<Intent> imagePicLauncher;
+    Uri selectedImageUri;
+    ImageView selectedImage;
+    boolean isImage;
+    RelativeLayout selectImageFrame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        isImage = false;
 
+//        trying to implement send photo functionality p2
+        imagePicLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result ->{
+            if(result.getResultCode() == Activity.RESULT_OK){
+                Intent data = result.getData();
+                if(data!=null && data.getData()!=null){
+                    selectedImageUri = data.getData();
+                    selectImageFrame.setVisibility(View.VISIBLE);
+                    inputMessage.setVisibility(View.INVISIBLE);
+                    imgSelectBtn.setVisibility(View.INVISIBLE);
+                    isImage = true;
+                    AndroidUtils.setImage(this,selectedImageUri,selectedImage);
+                }
+            }
+        });
+        selectedImage = findViewById(R.id.selectedImage);
+        selectImageFrame = findViewById(R.id.selectImageFrame);
         otherUsername = findViewById(R.id.other_username);
         backBtn = findViewById(R.id.back_button);
         messageSendBtn = findViewById(R.id.message_send_btn);
@@ -82,6 +114,7 @@ public class ChatActivity extends AppCompatActivity {
         chatRecyclerView = findViewById(R.id.chat_recycler_view);
         activeStatus = findViewById(R.id.otherUserStatus);
         otherUserDetails = findViewById(R.id.otherUserDetails);
+        imgSelectBtn = findViewById(R.id.imgSelectBtn);
 
         profilePic = findViewById(R.id.user_profile_picture);
 
@@ -102,13 +135,42 @@ public class ChatActivity extends AppCompatActivity {
                 }
             });
         }
+//p3
+        imgSelectBtn.setOnClickListener((v) ->{
+            ImagePicker.with(this).cropSquare().compress(512).maxResultSize(512,384)
+                    .createIntent(new Function1<Intent, Unit>() {
+                        @Override
+                        public Unit invoke(Intent intent) {
+                            imagePicLauncher.launch(intent);
+                            return null;
+                        }
+                    });
+        });
+
+        inputMessage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length() ==0){
+                    imgSelectBtn.setVisibility(View.VISIBLE);
+                } else
+                    imgSelectBtn.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
 
 
 
 
          if(!groupChat){
              otherUser = AndroidUtils.getUserModelFromIntent(getIntent());
-//             set profile pic of the other user
              FirebaseUtils.getOtherUserProfilePicStorageRef(otherUser.getUserId()).getDownloadUrl().addOnCompleteListener(t -> {
                  if(t.isSuccessful()){
                      Uri imageUri = t.getResult();
@@ -164,10 +226,17 @@ public class ChatActivity extends AppCompatActivity {
         getOrCreateChatroomModel();
 
         messageSendBtn.setOnClickListener(v -> {
+            if(isImage){
+                sendMessageToUser("sent an image",isImage);
+                selectImageFrame.setVisibility(View.GONE);
+                inputMessage.setVisibility(View.VISIBLE);
+                imgSelectBtn.setVisibility(View.VISIBLE);
+                return;
+            }
             String message = inputMessage.getText().toString().trim();
             if(message.isEmpty())
                 return;
-            sendMessageToUser(message);
+            sendMessageToUser(message, isImage);
         });
 
         setUpRecyclerView();
@@ -199,13 +268,11 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    void sendMessageToUser(String message){
+    void sendMessageToUser(String message, boolean isImage){
+
+        ChatMessageModel chatMessageModel = new ChatMessageModel(message,FirebaseUtils.currentUserId(),Timestamp.now(),"sent","",chatroomID,groupChat,isImage);
 
 
-
-
-
-        ChatMessageModel chatMessageModel = new ChatMessageModel(message,FirebaseUtils.currentUserId(),Timestamp.now(),"sent","",chatroomID,groupChat);
         FirebaseUtils.getChatroomMessageReference(chatroomID).add(chatMessageModel).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
@@ -213,6 +280,11 @@ public class ChatActivity extends AppCompatActivity {
                     currentMsgId = task.getResult().getId();
                     FirebaseUtils.getChatroomMessageReference(chatroomID).document(currentMsgId).update("msgId",currentMsgId);
                     inputMessage.setText("");
+                    if(isImage && selectedImageUri!=null){
+                        FirebaseUtils.getImageStorageReference(chatroomID,currentMsgId).putFile(selectedImageUri);
+                    } else{
+                        imgSelectBtn.setVisibility(View.VISIBLE);
+                    }
                     sendNotificationToUsers(message);
                     chatroomModel.setLastMessageTimeStamp(Timestamp.now());
                     chatroomModel.setLastMessageSenderId(FirebaseUtils.currentUserId());
@@ -221,6 +293,10 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+
+
 
 
 

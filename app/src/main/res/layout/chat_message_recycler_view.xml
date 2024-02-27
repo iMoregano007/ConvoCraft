@@ -22,6 +22,14 @@
             android:visibility="gone"
             android:textColor="@color/my_primary"
             />
+        <ImageView
+            android:layout_width="240dp"
+            android:layout_height="180dp"
+            android:id="@+id/leftImageV"
+            android:src="@drawable/loading_icon"
+            android:padding="4dp"
+            android:visibility="gone"
+            />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -67,6 +75,14 @@
         android:layout_alignParentEnd="true"
         android:orientation="vertical"
         android:id="@+id/right_message_layout">
+        <ImageView
+            android:layout_width="240dp"
+            android:layout_height="180dp"
+            android:id="@+id/rightImageV"
+            android:src="@drawable/loading_icon"
+            android:padding="4dp"
+            android:visibility="gone"
+            />
         <TextView
             android:layout_gravity="end"
             android:layout_width="wrap_content"

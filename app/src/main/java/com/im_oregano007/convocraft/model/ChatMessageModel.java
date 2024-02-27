@@ -13,11 +13,12 @@ public class ChatMessageModel {
     private String chatroomID;
 
     private boolean isGroup;
+    private boolean isImage;
 
     public ChatMessageModel() {
     }
 
-    public ChatMessageModel(String message, String senderId, Timestamp timestamp, String seenStatus, String msgId, String chatroomID, boolean isGroup) {
+    public ChatMessageModel(String message, String senderId, Timestamp timestamp, String seenStatus, String msgId, String chatroomID, boolean isGroup, boolean isImage) {
         this.message = message;
         this.senderId = senderId;
         this.timestamp = timestamp;
@@ -25,6 +26,7 @@ public class ChatMessageModel {
         this.msgId = msgId;
         this.chatroomID = chatroomID;
         this.isGroup = isGroup;
+        this.isImage = isImage;
     }
 
     public String getMessage() {
@@ -69,6 +71,14 @@ public class ChatMessageModel {
 
     public String getChatroomID() {
         return chatroomID;
+    }
+
+    public boolean isImage() {
+        return isImage;
+    }
+
+    public void setImage(boolean image) {
+        isImage = image;
     }
 
     public void setChatroomID(String chatroomID) {

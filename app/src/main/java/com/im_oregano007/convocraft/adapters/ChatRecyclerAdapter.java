@@ -2,6 +2,7 @@ package com.im_oregano007.convocraft.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,6 +39,7 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
 //        can set timestamp as well from here
         String chatroomID = model.getChatroomID();
         boolean isGroup = model.isGroup();
+        boolean isImage = model.isImage();
         if( chatroomID == null ||chatroomID.isEmpty()){
             chatroomID = FirebaseUtils.getChatroomId(FirebaseUtils.currentUserId(),model.getSenderId());
         }
@@ -45,8 +47,23 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
         if(model.getSenderId().equals(FirebaseUtils.currentUserId())){
             holder.leftChatLayout.setVisibility(View.GONE);
             holder.rightChatLayout.setVisibility(View.VISIBLE);
-            holder.rightChatTextV.setText(model.getMessage());
-            holder.rightChatTimestamp.setText(FirebaseUtils.timestampToString(model.getTimestamp()));
+            holder.rightChatTimestamp.setText(FirebaseUtils.timestampToString(model.getTimestamp(),false));
+            if(isImage && !model.getMsgId().equals("")){
+                holder.rightImageV.setVisibility(View.VISIBLE);
+                holder.rightChatTextV.setVisibility(View.GONE);
+                FirebaseUtils.getImageStorageReference(chatroomID,model.getMsgId()).getDownloadUrl().addOnCompleteListener(task -> {
+                    if(task.isSuccessful()){
+                        Uri imageUri = task.getResult();
+                        AndroidUtils.setImage(context,imageUri,holder.rightImageV);
+                    }
+
+                });
+            }else{
+//                holder.rightChatTextV.setVisibility(View.VISIBLE);
+                holder.rightChatTextV.setText(model.getMessage());
+
+            }
+
             if(seenS==null){
                 holder.seenStatus.setText("sent");
             } else {
@@ -67,10 +84,28 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
             } else {
                 holder.otherUserName.setVisibility(View.GONE);
             }
+
             holder.rightChatLayout.setVisibility(View.GONE);
             holder.leftChatLayout.setVisibility(View.VISIBLE);
-            holder.leftChatTextV.setText(model.getMessage());
-            holder.leftChatTimestamp.setText(FirebaseUtils.timestampToString(model.getTimestamp()));
+
+            if(isImage && !model.getMsgId().equals("")){
+                holder.leftImageV.setVisibility(View.VISIBLE);
+                holder.leftChatTextV.setVisibility(View.GONE);
+                FirebaseUtils.getImageStorageReference(chatroomID,model.getMsgId()).getDownloadUrl().addOnCompleteListener(task -> {
+                    if(task.isSuccessful()){
+                        Uri imageUri = task.getResult();
+                        AndroidUtils.setImage(context,imageUri,holder.leftImageV);
+                    }
+
+                });
+            }else{
+//                holder.rightChatTextV.setVisibility(View.VISIBLE);
+                holder.leftChatTextV.setText(model.getMessage());
+
+            }
+
+
+            holder.leftChatTimestamp.setText(FirebaseUtils.timestampToString(model.getTimestamp(),false));
             if(seenS == null || seenS.equals("sent")){
                 holder.msgStatus.setVisibility(View.VISIBLE);
                 holder.msgStatus.setText("new");
@@ -98,6 +133,7 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
     class ChatModelViewHolder extends RecyclerView.ViewHolder{
 
         LinearLayout leftChatLayout, rightChatLayout;
+        ImageView leftImageV, rightImageV;
         TextView leftChatTextV, rightChatTextV, leftChatTimestamp, rightChatTimestamp, seenStatus, msgStatus, otherUserName;
         public ChatModelViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -110,6 +146,8 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
             seenStatus = itemView.findViewById(R.id.seen_status);
             msgStatus = itemView.findViewById(R.id.msg_status);
             otherUserName = itemView.findViewById(R.id.other_username);
+            leftImageV = itemView.findViewById(R.id.leftImageV);
+            rightImageV = itemView.findViewById(R.id.rightImageV);
 
 
         }

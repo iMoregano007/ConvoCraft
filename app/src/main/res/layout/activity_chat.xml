@@ -76,6 +76,22 @@
         android:layout_above="@id/divider2"
         android:id="@+id/chat_recycler_view"
         />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/selectImageFrame"
+        android:padding="20dp"
+        android:background="@color/editTextBg"
+        android:visibility="gone"
+        android:layout_above="@id/divider2">
+        <ImageView
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:id="@+id/selectedImage"
+            android:layout_centerHorizontal="true"
+            />
+    </RelativeLayout>
+
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
         android:layout_height="2dp"
@@ -87,6 +103,18 @@
         android:id="@+id/message_frame"
         android:layout_alignParentBottom="true"
         >
+        <ImageButton
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/icon_image"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_alignParentStart="true"
+            android:id="@+id/imgSelectBtn"
+            app:tint="@color/off_white"
+            android:layout_marginStart="10dp"
+            android:padding="4dp"
+            android:layout_centerInParent="true"
+            />
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -97,7 +125,8 @@
             android:padding="10dp"
             android:layout_margin="10dp"
             android:layout_centerInParent="true"
-            android:layout_toLeftOf="@id/message_send_btn"
+            android:layout_toEndOf="@id/imgSelectBtn"
+            android:layout_toStartOf="@id/message_send_btn"
             />
 
         <ImageButton

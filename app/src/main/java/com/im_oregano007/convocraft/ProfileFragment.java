@@ -129,10 +129,9 @@ public class ProfileFragment extends Fragment {
 
         if(selectedImageUri!=null){
             changeInProgress(true);
-            currentUser.setUserName(newUserName);
             FirebaseUtils.getCurrentProfilePicStorageRef().putFile(selectedImageUri)
                     .addOnCompleteListener(task -> {
-                        updateToFireStore();
+                        changeInProgress(false);
                     });
         }
         if(!oldUsername.equals(newUserName.trim())){

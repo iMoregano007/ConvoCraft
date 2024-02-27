@@ -105,7 +105,7 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
                 }
             }
         });
-        holder.lastMessageTimeTextV.setText(FirebaseUtils.timestampToString(model.getLastMessageTimeStamp()));
+        holder.lastMessageTimeTextV.setText(FirebaseUtils.timestampToString(model.getLastMessageTimeStamp(),true));
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ChatActivity.class);
