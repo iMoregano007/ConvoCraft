@@ -72,9 +72,6 @@ public class SearchUserActivity extends AppCompatActivity {
                     .whereGreaterThanOrEqualTo("userName",searchTerm)
                     .whereLessThanOrEqualTo("userName",searchTerm+'\uf8ff');
         }
-//        Query query = FirebaseUtils.allUsersCollectionReference()
-//                .whereGreaterThanOrEqualTo("userName",searchTerm)
-//                .whereLessThanOrEqualTo("userName",searchTerm+'\uf8ff');
 
         FirestoreRecyclerOptions<UserModel> options = new FirestoreRecyclerOptions.Builder<UserModel>()
                 .setQuery(query,UserModel.class).build();
@@ -109,12 +106,6 @@ public class SearchUserActivity extends AppCompatActivity {
         }
     }
 
-//      trying to solve a prblm
-//    @Override
-//    protected void onDestroy() {
-//        setOnlineStatus(false);
-//        super.onDestroy();
-//    }
 
     void setOnlineStatus(boolean isOnline){
         AndroidUtils.setOnlineStatus(isOnline);

@@ -36,20 +36,13 @@ public class UserDetails extends AppCompatActivity {
         UserModel otherUser = AndroidUtils.getUserModelFromIntent(getIntent());
         updateDetails(otherUser);
     }
-// trying to solve a prblm
-//    @Override
-//    protected void onDestroy() {
-//        setOnlineStatus(false);
-//        super.onDestroy();
-//    }
+
 
     void updateDetails(UserModel otherUser){
         usernameToolbar.setText(otherUser.getUserName());
         mainUsername.setText(otherUser.getUserName());
         mobile.setText(otherUser.getPhone());
-//        String isActive = otherUser.getOnlineStatus();
-//        Log.i("username",otherUser.getUserName());
-//        Log.i("Active status",isActive);
+
         if(otherUser.getOnlineStatus()!=null){
             activeStatus.setText(otherUser.getOnlineStatus());
         } else {

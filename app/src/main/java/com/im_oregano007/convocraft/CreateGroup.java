@@ -45,7 +45,7 @@ public class CreateGroup extends AppCompatActivity {
         inputGroupName = findViewById(R.id.input_group_name);
         recyclerView = findViewById(R.id.create_group_recycler_view);
 
-        setupSearchRecyclerView(" ");
+        setupCreateGrpRecyclerView();
 
         backBtn.setOnClickListener(v -> {
             AndroidUtils.clearUserList();
@@ -75,12 +75,9 @@ public class CreateGroup extends AppCompatActivity {
 
     }
 
-    void setupSearchRecyclerView(String searchTerm){
+    void setupCreateGrpRecyclerView(){
         Query query = FirebaseUtils.allUsersCollectionReference()
-                .whereGreaterThanOrEqualTo("userName",searchTerm);
-//        Query query = FirebaseUtils.allUsersCollectionReference()
-//                .whereGreaterThanOrEqualTo("userName",searchTerm)
-//                .whereLessThanOrEqualTo("userName",searchTerm+'\uf8ff');
+                .whereGreaterThanOrEqualTo("userName"," ");
 
         FirestoreRecyclerOptions<UserModel> options = new FirestoreRecyclerOptions.Builder<UserModel>()
                 .setQuery(query,UserModel.class).build();

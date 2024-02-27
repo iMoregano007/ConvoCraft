@@ -35,12 +35,8 @@ public class MainActivity extends AppCompatActivity {
     AiCornerFragment aiCornerFragment;
     ProfileFragment profileFragment;
 
-//    String tempStatus = "";
 
-
-//    trying code to ask for notification permission at runtime code p1
 private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
-//
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +51,6 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
 
         setOnlineStatus(true);
 
-//        p2
         if(!checkNotificationPermission()){
             requestNotificationPermission();
         }
@@ -88,23 +83,8 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
 
         getFCMToken();
 
-//        FirebaseUtils.getCurrentUserDetails().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                if(task.isSuccessful()){
-//                    UserModel testUser = task.getResult().toObject(UserModel.class);
-//                    tempStatus = testUser.getOnlineStatus();
-//                }
-//            }
-//        });
-//        Log.i("Main A status",tempStatus);
     }
 
-//    @Override
-//    protected void onStop() {
-//        setOnlineStatus(false);
-//        super.onStop();
-//    }
 
     @Override
     protected void onResume() {
@@ -118,11 +98,6 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
         setOnlineStatus(true);
     }
 
-//    @Override
-//    protected void onPause() {
-//        setOnlineStatus(false);
-//        super.onPause();
-//    }
 
     @Override
     protected void onDestroy() {
@@ -139,7 +114,6 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
         });
     }
 
-//    p3
 
     private boolean checkNotificationPermission() {
         return ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)

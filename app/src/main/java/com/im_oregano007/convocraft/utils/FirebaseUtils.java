@@ -88,20 +88,6 @@ public class FirebaseUtils {
     }
 
 
-//    public static String getFCMTokenOfUsers(String userId){
-//        AtomicReference<String> token;
-//        allUsersCollectionReference().document(userId).get().addOnCompleteListener((OnCompleteListener<DocumentSnapshot>) task -> {
-//            if(task.isSuccessful());
-//            UserModel userM = task.getResult().toObject(UserModel.class);
-//            token.set(userM.getFcmToken());
-//            return token;
-//
-//        });
-//
-//
-//
-//        return "";
-//    }
 
 
 }

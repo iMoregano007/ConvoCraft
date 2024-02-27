@@ -76,11 +76,35 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
         }
 //change last message setting implementation
         boolean lastMsgSentByMe = model.getLastMessageSenderId().equals(FirebaseUtils.currentUserId());
+        FirebaseUtils.getChatroomMessageReference(model.getChatroomId()).document(model.getLastMessage()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    ChatMessageModel messageModel = task.getResult().toObject(ChatMessageModel.class);
+                    if(messageModel != null){
+                        holder.lastMessageSeenStatus.setVisibility(View.VISIBLE);
+                        if(lastMsgSentByMe){
+                            holder.lastMessageTextV.setText("You : "+messageModel.getMessage());
+                            holder.lastMessageSeenStatus.setText(messageModel.getSeenStatus());
+                        } else {
+                            holder.lastMessageTextV.setText(messageModel.getMessage());
+                            if(messageModel.getSeenStatus().equals("sent")){
+                                holder.lastMessageSeenStatus.setText("new");
+                            } else{
+                                holder.lastMessageSeenStatus.setText(messageModel.getSeenStatus());
+                            }
+                        }
 
-        if(lastMsgSentByMe){
-            holder.lastMessageTextV.setText("You : "+model.getLastMessage());
-        } else
-            holder.lastMessageTextV.setText(model.getLastMessage());
+                    }else {
+                            if(lastMsgSentByMe){
+                                holder.lastMessageTextV.setText("You : "+model.getLastMessage());
+                            } else
+                                holder.lastMessageTextV.setText(model.getLastMessage());
+                    }
+
+                }
+            }
+        });
         holder.lastMessageTimeTextV.setText(FirebaseUtils.timestampToString(model.getLastMessageTimeStamp()));
 
         holder.itemView.setOnClickListener(v -> {

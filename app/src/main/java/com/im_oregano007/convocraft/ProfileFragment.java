@@ -141,11 +141,6 @@ public class ProfileFragment extends Fragment {
             updateToFireStore();
         }
 
-//        if(!oldUsername.equals(newUserName.trim())){
-//            currentUser.setUserName(newUserName);
-//            changeInProgress(true);
-//            updateToFireStore();
-//        }
 
 
 

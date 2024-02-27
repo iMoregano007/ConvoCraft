@@ -203,10 +203,6 @@ public class ChatActivity extends AppCompatActivity {
 
 
 
-        chatroomModel.setLastMessageTimeStamp(Timestamp.now());
-        chatroomModel.setLastMessageSenderId(FirebaseUtils.currentUserId());
-        chatroomModel.setLastMessage(message);
-        FirebaseUtils.getChatroomReference(chatroomID).set(chatroomModel);
 
 
         ChatMessageModel chatMessageModel = new ChatMessageModel(message,FirebaseUtils.currentUserId(),Timestamp.now(),"sent","",chatroomID,groupChat);
@@ -218,6 +214,10 @@ public class ChatActivity extends AppCompatActivity {
                     FirebaseUtils.getChatroomMessageReference(chatroomID).document(currentMsgId).update("msgId",currentMsgId);
                     inputMessage.setText("");
                     sendNotificationToUsers(message);
+                    chatroomModel.setLastMessageTimeStamp(Timestamp.now());
+                    chatroomModel.setLastMessageSenderId(FirebaseUtils.currentUserId());
+                    chatroomModel.setLastMessage(currentMsgId);
+                    FirebaseUtils.getChatroomReference(chatroomID).set(chatroomModel);
                 }
             }
         });
