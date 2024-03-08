@@ -212,7 +212,7 @@ public class ChatActivity extends AppCompatActivity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackBtnClick();
+                onBackPressed();
             }
         });
 
@@ -295,11 +295,6 @@ public class ChatActivity extends AppCompatActivity {
         });
 
 
-
-
-
-
-
     }
 //   send notification to all members(group members)
     void sendNotificationToUsers(String nMessage){
@@ -319,15 +314,20 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-    void onBackBtnClick(){
-        if(cameFromSearchUser){
-                Intent mainIntent = new Intent(this, MainActivity.class);
-                mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(mainIntent);
+    @Override
+    public void onBackPressed() {
 
+        Intent mainIntent;
+        if (cameFromSearchUser) {
+            mainIntent = new Intent(this, SearchUserActivity.class);
         } else {
-            getOnBackPressedDispatcher().onBackPressed();
+            mainIntent = new Intent(this, RecentChats.class);
         }
+
+        mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
+        super.onBackPressed();
+
     }
     void getOrCreateChatroomModel(){
         FirebaseUtils.getChatroomReference(chatroomID).get().addOnCompleteListener(task -> {

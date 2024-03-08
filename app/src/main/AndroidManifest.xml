@@ -15,6 +15,15 @@
         android:theme="@style/Theme.ConvoCraft"
         tools:targetApi="31">
         <activity
+            android:name=".ProfileViewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RecentChats"
+            android:exported="false" />
+        <activity
+            android:name=".ViewImageFullScreen"
+            android:exported="false" />
+        <activity
             android:name=".ChatgptScreen"
             android:exported="false" />
         <activity

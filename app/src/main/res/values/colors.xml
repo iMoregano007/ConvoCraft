@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="my_primary">#B9E44926</color>
+    <color name="my_primary">#B95C60AF</color>
     <color name="my_secondary">#4D565F</color>
     <color name="message_receiver">#4D565F</color>
     <color name="message_seenS">#418306</color>

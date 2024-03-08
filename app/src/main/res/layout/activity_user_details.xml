@@ -11,7 +11,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/my_primary"
+        android:background="@color/background"
         android:padding="10dp"
         android:id="@+id/toolbar">
         <TextView
@@ -24,7 +24,7 @@
             android:textSize="22sp"
             android:id="@+id/userDetails_username"
             android:layout_centerInParent="true"
-            android:layout_toRightOf="@id/back_button"/>
+            android:layout_toEndOf="@id/back_button"/>
         <ImageButton
             android:layout_width="32dp"
             android:layout_height="32dp"
@@ -39,7 +39,10 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_below="@id/toolbar"
-        android:layout_margin="20dp">
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        >
         <ImageView
             android:layout_width="160dp"
             android:layout_height="160dp"
@@ -53,70 +56,77 @@
             android:layout_gravity="center_horizontal"/>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="20dp"
-            android:gravity="center">
-            <TextView
-                android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@drawable/user_details_bg">
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Username : "
-                android:textStyle="bold"
-                android:textSize="24sp"
-                android:textColor="@color/white"/>
-            <TextView
-                android:layout_marginStart="20dp"
-                android:layout_width="wrap_content"
+                android:orientation="horizontal"
+                android:padding="20dp"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Username : "
+                    android:textStyle="bold"
+                    android:textSize="24sp"
+                    android:textColor="@color/white"/>
+                <TextView
+                    android:layout_marginStart="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Modi ji"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:id="@+id/userDetail_Username2"
+                    android:textColor="@color/message_seenS"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:text="Modi ji"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:id="@+id/userDetail_Username2"
-                android:textColor="@color/my_primary"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:padding="20dp">
-            <TextView
-                android:layout_width="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:padding="20dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Active Status : "
+                    android:textSize="20sp"
+                    android:textColor="@color/white"/>
+                <TextView
+                    android:layout_marginStart="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="Offline"
+                    android:textSize="20sp"
+                    android:id="@+id/userDetail_onlineStatus"
+                    android:textColor="@color/message_seenS"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Active Status : "
-                android:textSize="20sp"
-                android:textColor="@color/white"/>
-            <TextView
-                android:layout_marginStart="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="Offline"
-                android:textSize="20sp"
-                android:id="@+id/userDetail_onlineStatus"
-                android:textColor="@color/my_primary"/>
+                android:orientation="horizontal"
+                android:padding="20dp"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mobile No : "
+                    android:textSize="20sp"
+                    android:textColor="@color/white"/>
+                <TextView
+                    android:layout_marginStart="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="9999999999"
+                    android:textSize="20sp"
+                    android:id="@+id/userDetail_mobile"
+                    android:textColor="@color/message_seenS"/>
+            </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="20dp"
-            android:gravity="center">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mobile No : "
-                android:textSize="20sp"
-                android:textColor="@color/white"/>
-            <TextView
-                android:layout_marginStart="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="9999999999"
-                android:textSize="20sp"
-                android:id="@+id/userDetail_mobile"
-                android:textColor="@color/my_primary"/>
-        </LinearLayout>
 
 
     </LinearLayout>

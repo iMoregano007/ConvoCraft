@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ProfileFragment"
     android:orientation="vertical"
     android:gravity="center"
     android:layout_margin="20dp"
@@ -42,12 +41,16 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
         android:background="@color/shimmer_effect_color"
         android:gravity="center"
         android:inputType="text"
         android:enabled="false"
         android:padding="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="150dp"
+
         />
 
 

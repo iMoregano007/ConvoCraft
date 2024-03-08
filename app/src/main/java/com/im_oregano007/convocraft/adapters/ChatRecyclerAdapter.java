@@ -21,6 +21,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.im_oregano007.convocraft.ChatActivity;
 import com.im_oregano007.convocraft.R;
+import com.im_oregano007.convocraft.ViewImageFullScreen;
 import com.im_oregano007.convocraft.model.ChatMessageModel;
 import com.im_oregano007.convocraft.model.UserModel;
 import com.im_oregano007.convocraft.utils.AndroidUtils;
@@ -57,6 +58,12 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
                         AndroidUtils.setImage(context,imageUri,holder.rightImageV);
                     }
 
+                });
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        openImageFullView(model.getChatroomID(), model.getMsgId());
+                    }
                 });
             }else{
 //                holder.rightChatTextV.setVisibility(View.VISIBLE);
@@ -98,6 +105,13 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
                     }
 
                 });
+
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        openImageFullView(model.getChatroomID(), model.getMsgId());
+                    }
+                });
             }else{
 //                holder.rightChatTextV.setVisibility(View.VISIBLE);
                 holder.leftChatTextV.setText(model.getMessage());
@@ -121,6 +135,13 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
                 },1000);
             }
         }
+    }
+    void openImageFullView(String chatroomId, String msgId){
+        Intent intent = new Intent(context, ViewImageFullScreen.class);
+        intent.putExtra("chatroomID",chatroomId);
+        intent.putExtra("msgId",msgId);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 
     @NonNull

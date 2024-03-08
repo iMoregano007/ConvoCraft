@@ -1,22 +1,18 @@
 package com.im_oregano007.convocraft;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.os.Handler;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -24,11 +20,7 @@ import android.widget.TextView;
 
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.github.dhaval2404.imagepicker.ImagePicker;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.storage.UploadTask;
 import com.im_oregano007.convocraft.model.UserModel;
 import com.im_oregano007.convocraft.utils.AndroidUtils;
 import com.im_oregano007.convocraft.utils.FirebaseUtils;
@@ -36,8 +28,7 @@ import com.im_oregano007.convocraft.utils.FirebaseUtils;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
-
-public class ProfileFragment extends Fragment {
+public class ProfileViewActivity extends AppCompatActivity {
 
     ImageView profilePic;
     EditText usernameInput,phoneNumber;
@@ -50,41 +41,34 @@ public class ProfileFragment extends Fragment {
     Uri selectedImageUri;
     ShimmerFrameLayout shimmerFrameLayout;
     LinearLayout dataView;
-
-
-    public ProfileFragment() {
-        // Required empty public constructor
-    }
+    ImageButton backBtn;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_profile_view);
         imagePicLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result ->{
-           if(result.getResultCode() == Activity.RESULT_OK){
-               Intent data = result.getData();
-               if(data!=null && data.getData()!=null){
+            if(result.getResultCode() == Activity.RESULT_OK){
+                Intent data = result.getData();
+                if(data!=null && data.getData()!=null){
                     selectedImageUri = data.getData();
-                    AndroidUtils.setProfilePic(getContext(),selectedImageUri,profilePic);
-               }
-           }
+                    AndroidUtils.setProfilePic(this,selectedImageUri,profilePic);
+                }
+            }
         });
-    }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
-        View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        profilePic = view.findViewById(R.id.profile_picture_das);
-        usernameInput = view.findViewById(R.id.profile_username);
-        phoneNumber = view.findViewById(R.id.profile_phone);
-        progressBar = view.findViewById(R.id.profile_progress_bar);
-        logoutBtn = view.findViewById(R.id.logout_btn);
-        updateProfileBtn = view.findViewById(R.id.profile_update_btn);
-        shimmerFrameLayout = view.findViewById(R.id.shimmer_effect_profile);
-        dataView = view.findViewById(R.id.data_view);
+        profilePic = findViewById(R.id.profile_picture_das);
+        usernameInput = findViewById(R.id.profile_username);
+        phoneNumber = findViewById(R.id.profile_phone);
+        progressBar = findViewById(R.id.profile_progress_bar);
+        logoutBtn = findViewById(R.id.logout_btn);
+        updateProfileBtn = findViewById(R.id.profile_update_btn);
+        shimmerFrameLayout = findViewById(R.id.shimmer_effect_profile);
+        dataView = findViewById(R.id.data_view);
         dataView.setVisibility(View.INVISIBLE);
+        backBtn = findViewById(R.id.back_button);
+
+        backBtn.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
 
         getUserData();
 
@@ -96,8 +80,8 @@ public class ProfileFragment extends Fragment {
             FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener(task -> {
                 if(task.isSuccessful()){
                     FirebaseUtils.logout();
-                    AndroidUtils.showToastShort(getContext(),"Logged Out Successfully");
-                    Intent intent = new Intent(getContext(), SplashScreen.class);
+                    AndroidUtils.showToastShort(this,"Logged Out Successfully");
+                    Intent intent = new Intent(this, SplashScreen.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                 }
@@ -117,7 +101,9 @@ public class ProfileFragment extends Fragment {
                     });
         });
 
-        return view;
+
+
+
     }
 
     void updateBtnClick(){
@@ -149,9 +135,9 @@ public class ProfileFragment extends Fragment {
         FirebaseUtils.getCurrentUserDetails().set(currentUser).addOnCompleteListener(task -> {
             changeInProgress(false);
             if(task.isSuccessful()){
-                AndroidUtils.showToastShort(getContext(),"Update successfully");
+                AndroidUtils.showToastShort(this,"Update successfully");
             } else{
-                AndroidUtils.showToastShort(getContext(),"Update Failed");
+                AndroidUtils.showToastShort(this,"Update Failed");
             }
         });
     }
@@ -162,7 +148,7 @@ public class ProfileFragment extends Fragment {
         FirebaseUtils.getCurrentProfilePicStorageRef().getDownloadUrl().addOnCompleteListener(task -> {
             if(task.isSuccessful()){
                 Uri imageUri = task.getResult();
-                AndroidUtils.setProfilePic(getContext(),imageUri,profilePic);
+                AndroidUtils.setProfilePic(this,imageUri,profilePic);
             }
 
         });

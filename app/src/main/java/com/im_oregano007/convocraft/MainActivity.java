@@ -15,6 +15,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -30,10 +31,10 @@ import com.im_oregano007.convocraft.utils.FirebaseUtils;
 public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
-    ImageButton searchBtn, createGroup;
-    ChatFragment chatFragment;
-    AiCornerFragment aiCornerFragment;
-    ProfileFragment profileFragment;
+    LinearLayout searchBtn, createGroup, recentChats, chatWithAiBtn, profileBtn;
+//    ChatFragment chatFragment;
+//    AiCornerFragment aiCornerFragment;
+//    ProfileFragment profileFragment;
 
 
 private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
@@ -42,12 +43,27 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        chatFragment = new ChatFragment();
-        aiCornerFragment = new AiCornerFragment();
-        profileFragment = new ProfileFragment();
-        bottomNavigationView = findViewById(R.id.main_navigation_view);
+//        chatFragment = new ChatFragment();
+//        aiCornerFragment = new AiCornerFragment();
+//        profileFragment = new ProfileFragment();
+//        bottomNavigationView = findViewById(R.id.main_navigation_view);
         searchBtn = findViewById(R.id.search_button);
         createGroup = findViewById(R.id.create_group);
+        profileBtn = findViewById(R.id.profileBtn);
+        chatWithAiBtn = findViewById(R.id.chatWithAiBtn);
+        recentChats = findViewById(R.id.recentChats);
+
+        recentChats.setOnClickListener(v ->{
+            startActivity(new Intent(MainActivity.this, RecentChats.class));
+        });
+        profileBtn.setOnClickListener(v ->{
+            startActivity(new Intent(MainActivity.this, ProfileViewActivity.class));
+
+        });
+        chatWithAiBtn.setOnClickListener(v ->{
+            startActivity(new Intent(MainActivity.this, ChatgptScreen.class));
+
+        });
 
         setOnlineStatus(true);
 
@@ -62,24 +78,24 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
             startActivity(new Intent(MainActivity.this,CreateGroup.class));
         });
 
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+//            @Override
+//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//
+//                if(item.getItemId() == R.id.menu_chat){
+//                    getSupportFragmentManager().beginTransaction().replace(R.id.main_frame,chatFragment).commit();
+//                }
+//                if(item.getItemId() == R.id.menu_ai){
+//                    getSupportFragmentManager().beginTransaction().replace(R.id.main_frame,aiCornerFragment).commit();
+//                }
+//                if(item.getItemId() == R.id.menu_profile){
+//                    getSupportFragmentManager().beginTransaction().replace(R.id.main_frame,profileFragment).commit();
+//                }
+//                return true;
+//            }
+//        });
 
-                if(item.getItemId() == R.id.menu_chat){
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main_frame,chatFragment).commit();
-                }
-                if(item.getItemId() == R.id.menu_ai){
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main_frame,aiCornerFragment).commit();
-                }
-                if(item.getItemId() == R.id.menu_profile){
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main_frame,profileFragment).commit();
-                }
-                return true;
-            }
-        });
-
-        bottomNavigationView.setSelectedItemId(R.id.menu_chat);
+//        bottomNavigationView.setSelectedItemId(R.id.menu_chat);
 
         getFCMToken();
 
