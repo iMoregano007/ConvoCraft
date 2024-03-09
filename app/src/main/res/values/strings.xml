@@ -2,6 +2,10 @@
     <string name="app_name">ConvoCraft</string>
     <string name="backBtn">Back Button</string>
     <string name="chatGPT">ChatGPT/AI in current times offers instant access to info, assistance, and personalized recommendations. Its natural language understanding enhances productivity by swiftly addressing queries. With seamless interaction, users enjoy efficient and enjoyable experiences.</string>
+    <string name="chatgpt_ai">ChatGPT (AI)</string>
+    <string name="online">Online</string>
+    <string name="write_message_here">Write Message here</string>
+    <string name="chat_with_ai">Chat with AI</string>
 
 
 </resources>

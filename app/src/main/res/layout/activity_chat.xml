@@ -61,11 +61,6 @@
             android:layout_marginStart="10dp"
             />
     </RelativeLayout>
-<!--    <com.google.android.material.divider.MaterialDivider-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="2dp"-->
-<!--        android:layout_below="@id/toolbar"-->
-<!--        android:id="@+id/divider"/>-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -136,7 +131,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Write Message here"
+            android:hint="@string/write_message_here"
             android:background="@drawable/input_message_bg"
             android:id="@+id/input_message"
             android:elevation="4dp"

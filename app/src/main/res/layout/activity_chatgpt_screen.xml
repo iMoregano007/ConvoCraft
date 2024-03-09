@@ -5,13 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ChatgptScreen"
-    android:background="@color/background"
+    android:background="#EE262B31"
     >
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/secondary_test"
         android:padding="10dp"
         android:id="@+id/toolbar">
         <LinearLayout
@@ -25,7 +24,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ChatGPT (AI)"
+                android:text="@string/chatgpt_ai"
                 android:textStyle="bold"
                 android:textColor="@color/white"
                 android:textSize="22sp"
@@ -33,7 +32,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Online"
+                android:text="@string/online"
                 android:id="@+id/chatGptStatus"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="2dp"
@@ -43,16 +42,15 @@
         </LinearLayout>
 
 
-
         <ImageButton
+            android:id="@+id/back_button"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/icon_back"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/white"
-            android:id="@+id/back_button"
             android:layout_centerVertical="true"
-            />
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/icon_back"
+            app:tint="@color/white" />
 
         <ImageView
             android:layout_width="48dp"
@@ -62,24 +60,35 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
             android:background="@drawable/roundbg"
-            android:layout_toRightOf="@id/back_button"
+            android:layout_toEndOf="@id/back_button"
             android:id="@+id/chatgptIcon"
             />
 
     </RelativeLayout>
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_below="@id/toolbar"
-        android:id="@+id/divider"/>
-
-    <androidx.recyclerview.widget.RecyclerView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/divider"
+        android:layout_below="@id/toolbar"
         android:layout_above="@id/divider2"
-        android:id="@+id/chat_recycler_view"
-        />
+        android:background="@drawable/chat_background"
+        android:orientation="vertical"
+        >
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="100dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="5dp"
+            app:dividerColor="@color/white"
+            android:layout_gravity="center_horizontal"
+            />
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/chat_recycler_view"
+            android:layout_marginTop="12dp"
+            />
+
+    </LinearLayout>
+
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
         android:layout_height="2dp"
@@ -94,28 +103,28 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:hint="Write Message here"
+            android:hint="@string/write_message_here"
             android:background="@drawable/input_message_bg"
             android:id="@+id/input_message"
             android:elevation="4dp"
             android:padding="10dp"
             android:layout_margin="10dp"
             android:layout_centerInParent="true"
-            android:layout_toLeftOf="@id/message_send_btn"
+            android:layout_toStartOf="@id/message_send_btn"
             />
 
         <ImageButton
+            android:id="@+id/message_send_btn"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/icon_send"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_alignParentEnd="true"
-            android:id="@+id/message_send_btn"
-            app:tint="@color/off_white"
-            android:layout_marginStart="10dp"
-            android:padding="8dp"
             android:layout_centerInParent="true"
-            />
+            android:layout_marginStart="10dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/app_name"
+            android:padding="8dp"
+            android:src="@drawable/icon_send"
+            app:tint="@color/off_white" />
     </RelativeLayout>
 
 

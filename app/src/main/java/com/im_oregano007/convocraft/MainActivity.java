@@ -5,25 +5,39 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.im_oregano007.convocraft.adapters.MainScreenRecentChatRecyclerAdapter;
+import com.im_oregano007.convocraft.model.ChatroomModel;
 import com.im_oregano007.convocraft.model.UserModel;
 import com.im_oregano007.convocraft.utils.AndroidUtils;
 import com.im_oregano007.convocraft.utils.FirebaseUtils;
@@ -32,9 +46,12 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
     LinearLayout searchBtn, createGroup, recentChats, chatWithAiBtn, profileBtn;
-//    ChatFragment chatFragment;
-//    AiCornerFragment aiCornerFragment;
-//    ProfileFragment profileFragment;
+    RecyclerView mainScreenRecyclerV;
+    MainScreenRecentChatRecyclerAdapter adapter;
+    ImageView profilePic;
+    TextView username;
+
+    ShimmerFrameLayout shimmerFrameLayout;
 
 
 private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
@@ -43,15 +60,16 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        chatFragment = new ChatFragment();
-//        aiCornerFragment = new AiCornerFragment();
-//        profileFragment = new ProfileFragment();
-//        bottomNavigationView = findViewById(R.id.main_navigation_view);
         searchBtn = findViewById(R.id.search_button);
         createGroup = findViewById(R.id.create_group);
         profileBtn = findViewById(R.id.profileBtn);
         chatWithAiBtn = findViewById(R.id.chatWithAiBtn);
         recentChats = findViewById(R.id.recentChats);
+        mainScreenRecyclerV = findViewById(R.id.mainScreenRecyclerV);
+        profilePic = findViewById(R.id.mainScreenProfilePic);
+        username = findViewById(R.id.mainScreenUsername);
+        shimmerFrameLayout = findViewById(R.id.shimmerEffectMainScreen);
+
 
         recentChats.setOnClickListener(v ->{
             startActivity(new Intent(MainActivity.this, RecentChats.class));
@@ -78,27 +96,54 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
             startActivity(new Intent(MainActivity.this,CreateGroup.class));
         });
 
-//        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-//            @Override
-//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//
-//                if(item.getItemId() == R.id.menu_chat){
-//                    getSupportFragmentManager().beginTransaction().replace(R.id.main_frame,chatFragment).commit();
-//                }
-//                if(item.getItemId() == R.id.menu_ai){
-//                    getSupportFragmentManager().beginTransaction().replace(R.id.main_frame,aiCornerFragment).commit();
-//                }
-//                if(item.getItemId() == R.id.menu_profile){
-//                    getSupportFragmentManager().beginTransaction().replace(R.id.main_frame,profileFragment).commit();
-//                }
-//                return true;
-//            }
-//        });
-
-//        bottomNavigationView.setSelectedItemId(R.id.menu_chat);
+        setUpRecyclerView();
+        setUserDetails();
 
         getFCMToken();
 
+        hideShimmerEffect();
+
+    }
+
+    void hideShimmerEffect(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                shimmerFrameLayout.setVisibility(View.GONE);
+            }
+        },1500);
+    }
+
+    void setUserDetails(){
+        FirebaseUtils.getCurrentProfilePicStorageRef().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if(task.isSuccessful()){
+                    Uri imageUri = task.getResult();
+                    AndroidUtils.setProfilePic(MainActivity.this,imageUri,profilePic);
+                }
+            }
+        });
+
+        FirebaseUtils.getCurrentUserDetails().get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                UserModel currentUser = task.getResult().toObject(UserModel.class);
+                username.setText(currentUser.getUserName());
+            }
+        });
+    }
+
+    void setUpRecyclerView(){
+        Query query = FirebaseUtils.allChatroomCollectionReference()
+                .whereArrayContains("userIds",FirebaseUtils.currentUserId())
+                .orderBy("lastMessageTimeStamp", Query.Direction.DESCENDING);
+
+        FirestoreRecyclerOptions<ChatroomModel> options = new FirestoreRecyclerOptions.Builder<ChatroomModel>()
+                .setQuery(query, ChatroomModel.class).build();
+        adapter = new MainScreenRecentChatRecyclerAdapter(options,this);
+        mainScreenRecyclerV.setLayoutManager(new LinearLayoutManager(this));
+        mainScreenRecyclerV.setAdapter(adapter);
+        adapter.startListening();
     }
 
 
@@ -106,6 +151,10 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
     protected void onResume() {
         super.onResume();
         setOnlineStatus(true);
+        if(adapter!= null){
+            adapter.notifyDataSetChanged();
+        }
+
     }
 
     @Override
@@ -114,6 +163,21 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
         setOnlineStatus(true);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(adapter!= null){
+            adapter.stopListening();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(adapter!= null){
+            adapter.startListening();
+        }
+    }
 
     @Override
     protected void onDestroy() {

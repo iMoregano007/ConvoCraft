@@ -5,18 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity"
-    android:padding="20dp"
-    android:background="@color/background">
-
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/shimmerEffectMainScreen">
-        <include layout="@layout/main_screen_shimmer_effect"/>
-    </com.facebook.shimmer.ShimmerFrameLayout>
-
-
+    android:background="@color/background"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,20 +20,71 @@
             android:padding="5dp"
             android:layout_marginEnd="5dp"
             android:background="@drawable/card_view_bg"
-            android:id="@+id/recentChats"
             android:layout_weight="3">
             <TextView
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chats"
+                android:layout_width="60dp"
+                android:layout_height="30dp"
+                android:background="@color/shimmer_effect_color"
                 android:textSize="24sp"/>
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:id="@+id/mainScreenRecyclerV"/>
+            <TextView
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="10dp"
+                android:layout_width="100dp"
+                android:layout_height="20dp"
+                android:background="@color/shimmer_effect_color"
+                android:textSize="24sp"/>
+            <TextView
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="10dp"
+                android:layout_width="100dp"
+                android:layout_height="20dp"
+                android:background="@color/shimmer_effect_color"
+                android:textSize="24sp"/>
+            <TextView
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="10dp"
+                android:layout_width="100dp"
+                android:layout_height="20dp"
+                android:background="@color/shimmer_effect_color"
+                android:textSize="24sp"/>
+            <TextView
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="10dp"
+                android:layout_width="100dp"
+                android:layout_height="20dp"
+                android:background="@color/shimmer_effect_color"
+                android:textSize="24sp"/>
+            <TextView
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="10dp"
+                android:layout_width="100dp"
+                android:layout_height="20dp"
+                android:background="@color/shimmer_effect_color"
+                android:textSize="24sp"/>
+            <TextView
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="10dp"
+                android:layout_width="100dp"
+                android:layout_height="20dp"
+                android:background="@color/shimmer_effect_color"
+                android:textSize="24sp"/>
+            <TextView
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="10dp"
+                android:layout_width="100dp"
+                android:layout_height="20dp"
+                android:background="@color/shimmer_effect_color"
+                android:textSize="24sp"/>
+            <TextView
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="10dp"
+                android:layout_width="100dp"
+                android:layout_height="20dp"
+                android:background="@color/shimmer_effect_color"
+                android:textSize="24sp"/>
+
         </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
@@ -61,16 +102,17 @@
                 android:background="@drawable/card_view_bg"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:id="@+id/search_button"
                 >
                 <ImageView
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:src="@drawable/search_icon"/>
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/shimmer_effect_color"
+                    />
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Search \n  User"
+                    android:layout_width="80dp"
+                    android:layout_height="60dp"
+                    android:background="@color/shimmer_effect_color"
                     android:textSize="18sp"/>
             </LinearLayout>
             <LinearLayout
@@ -82,16 +124,17 @@
                 android:background="@drawable/card_view_bg"
                 android:layout_marginTop="5dp"
                 android:layout_weight="1"
-                android:id="@+id/create_group"
                 >
                 <ImageView
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:src="@drawable/add_icon"/>
+                    android:layout_marginBottom="10dp"
+
+                    android:background="@color/shimmer_effect_color"/>
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Create \nGroup"
+                    android:layout_width="80dp"
+                    android:layout_height="60dp"
+                    android:background="@color/shimmer_effect_color"
                     android:textSize="18sp"/>
             </LinearLayout>
         </LinearLayout>
@@ -111,16 +154,15 @@
             android:background="@drawable/card_view_bg"
             android:layout_weight="2"
             android:layout_marginEnd="5dp"
-            android:id="@+id/chatWithAiBtn">
+            >
             <ImageView
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:src="@drawable/chatgptlogo"
-                />
+                android:background="@color/shimmer_effect_color"                />
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/chat_with_ai"
+                android:layout_width="100dp"
+                android:layout_height="22dp"
+                android:background="@color/shimmer_effect_color"
                 android:layout_marginTop="20dp"
                 android:textSize="18sp"/>
 
@@ -133,23 +175,20 @@
             android:layout_weight="3"
             android:background="@drawable/card_view_bg"
             android:layout_marginStart="5dp"
-            android:id="@+id/profileBtn">
+            >
             <ImageView
                 android:layout_width="96dp"
                 android:layout_height="96dp"
-                android:src="@drawable/user_icon"
                 android:padding="2dp"
                 android:layout_marginBottom="20dp"
-                android:id="@+id/mainScreenProfilePic"
-                android:background="@drawable/roundbg"
+                android:background="@color/shimmer_effect_color"
                 />
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Username"
+                android:layout_width="100dp"
+                android:layout_height="26dp"
+                android:background="@color/shimmer_effect_color"
                 android:textStyle="bold"
-                android:textSize="18sp"
-                android:id="@+id/mainScreenUsername"/>
+                android:textSize="18sp"/>
 
         </LinearLayout>
 

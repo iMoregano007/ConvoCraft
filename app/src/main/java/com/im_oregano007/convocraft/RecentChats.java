@@ -70,7 +70,7 @@ public class RecentChats extends AppCompatActivity {
                 recyclerView.setVisibility(View.VISIBLE);
                 shimmerFrameLayout.setVisibility(View.GONE);
             }
-        },1000);
+        },1500);
 
     }
 
