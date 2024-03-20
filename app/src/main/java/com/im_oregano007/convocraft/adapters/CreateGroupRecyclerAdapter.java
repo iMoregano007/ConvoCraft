@@ -53,9 +53,6 @@ public class CreateGroupRecyclerAdapter extends FirestoreRecyclerAdapter<UserMod
         holder.itemView.setOnClickListener(v -> {
             holder.selectSign.setVisibility(View.VISIBLE);
             AndroidUtils.addToGroup(model.getUserId());
-
-//            move to chat activity
-
         });
     }
 

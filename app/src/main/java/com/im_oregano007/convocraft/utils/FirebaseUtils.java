@@ -33,6 +33,10 @@ public class FirebaseUtils {
         return FirebaseFirestore.getInstance().collection("users").document(currentUserId());
     }
 
+    public static DocumentReference getUserDetails(String userId){
+        return FirebaseFirestore.getInstance().collection("users").document(userId);
+    }
+
     public static CollectionReference allUsersCollectionReference(){
         return FirebaseFirestore.getInstance().collection("users");
     }

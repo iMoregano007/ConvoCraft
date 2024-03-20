@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,6 +43,7 @@ public class ProfileViewActivity extends AppCompatActivity {
     ShimmerFrameLayout shimmerFrameLayout;
     LinearLayout dataView;
     ImageButton backBtn;
+    Uri shUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,11 @@ public class ProfileViewActivity extends AppCompatActivity {
                 }
             }
         });
+        SharedPreferences sharedPreferences = getSharedPreferences("userSharedPref",MODE_PRIVATE);
+        String uriString = sharedPreferences.getString("profilePicUri","");
+        if(!uriString.isEmpty()){
+            shUri = Uri.parse(uriString);
+        }
 
         profilePic = findViewById(R.id.profile_picture_das);
         usernameInput = findViewById(R.id.profile_username);
@@ -145,13 +152,16 @@ public class ProfileViewActivity extends AppCompatActivity {
     void getUserData(){
         hideShimmerEffect();
 
-        FirebaseUtils.getCurrentProfilePicStorageRef().getDownloadUrl().addOnCompleteListener(task -> {
-            if(task.isSuccessful()){
-                Uri imageUri = task.getResult();
-                AndroidUtils.setProfilePic(this,imageUri,profilePic);
-            }
-
-        });
+        if(shUri!=null){
+            AndroidUtils.setProfilePic(this,shUri,profilePic);
+        }
+//        FirebaseUtils.getCurrentProfilePicStorageRef().getDownloadUrl().addOnCompleteListener(task -> {
+//            if(task.isSuccessful()){
+//                Uri imageUri = task.getResult();
+//                AndroidUtils.setProfilePic(this,imageUri,profilePic);
+//            }
+//
+//        });
 
         changeInProgress(true);
         FirebaseUtils.getCurrentUserDetails().get().addOnCompleteListener(task -> {

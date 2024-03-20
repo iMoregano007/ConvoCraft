@@ -129,7 +129,7 @@ public class ChatActivity extends AppCompatActivity {
                     if(groupChat){
                         otherUsername.setText(groupChatroom.getGroupName());
                         activeStatus.setVisibility(View.INVISIBLE);
-                        otherUserDetails.setEnabled(false);
+//                        otherUserDetails.setEnabled(false);
                     }
 
                 }
@@ -194,13 +194,19 @@ public class ChatActivity extends AppCompatActivity {
              }
 
 
-             otherUserDetails.setOnClickListener(v -> {
-                 Intent intent = new Intent(this, UserDetails.class);
-                 AndroidUtils.passUserModelAsIntent(intent, otherUser);
-                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                 startActivity(intent);
-             });
          }
+
+        otherUserDetails.setOnClickListener(v -> {
+            Intent intent = new Intent(this, UserDetails.class);
+            intent.putExtra("isGroupChat",groupChat);
+            intent.putExtra("chatroomID",chatroomID);
+            if(groupChat)
+                intent.putExtra("groupName",groupName);
+            else
+                AndroidUtils.passUserModelAsIntent(intent, otherUser);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        });
 
 
         cameFromSearchUser = getIntent().getBooleanExtra("cameFromSearchSection",false);

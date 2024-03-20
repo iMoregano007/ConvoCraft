@@ -4,9 +4,11 @@ import static androidx.core.content.ContextCompat.startActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,6 +26,8 @@ import com.im_oregano007.convocraft.model.ChatroomModel;
 import com.im_oregano007.convocraft.model.UserModel;
 import com.im_oregano007.convocraft.utils.AndroidUtils;
 import com.im_oregano007.convocraft.utils.FirebaseUtils;
+
+import java.util.List;
 
 public class MainScreenRecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatroomModel, MainScreenRecentChatRecyclerAdapter.ChatroomViewHolder> {
 
@@ -49,11 +53,28 @@ public class MainScreenRecentChatRecyclerAdapter extends FirestoreRecyclerAdapte
                     }
                 }
             });
+            FirebaseUtils.getOtherUserProfilePicStorageRef(otherUserId(model.getUserIds())).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if(task.isSuccessful()){
+                        Uri imageUri = task.getResult();
+                        AndroidUtils.setProfilePic(context,imageUri,holder.profilePic);
+                    }
+                }
+            });
         }
 
         holder.itemView.setOnClickListener(v -> {
             context.startActivity(new Intent(context, RecentChats.class));
         });
+    }
+
+    String otherUserId(List<String> userIds){
+        if(userIds.get(0).equals(FirebaseUtils.currentUserId())){
+            return userIds.get(1);
+        } else {
+            return userIds.get(0);
+        }
     }
 
     @NonNull
@@ -65,9 +86,11 @@ public class MainScreenRecentChatRecyclerAdapter extends FirestoreRecyclerAdapte
 
     public class ChatroomViewHolder extends RecyclerView.ViewHolder{
         TextView usernameText;
+        ImageView profilePic;
         public ChatroomViewHolder(@NonNull View itemView) {
             super(itemView);
             usernameText = itemView.findViewById(R.id.username_text);
+            profilePic = itemView.findViewById(R.id.user_profile_picture);
         }
     }
 }

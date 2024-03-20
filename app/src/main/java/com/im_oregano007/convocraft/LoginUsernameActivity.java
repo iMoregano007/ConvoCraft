@@ -25,6 +25,9 @@ import com.im_oregano007.convocraft.model.UserModel;
 import com.im_oregano007.convocraft.utils.AndroidUtils;
 import com.im_oregano007.convocraft.utils.FirebaseUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
@@ -71,7 +74,8 @@ public class LoginUsernameActivity extends AppCompatActivity {
         if(userModel != null){
             userModel.setUserName(userName);
         } else{
-            userModel = new UserModel(userName, phoneNumber, Timestamp.now(), FirebaseUtils.currentUserId(),"Offline");
+            List<String> allGroupsList = new ArrayList<>();
+            userModel = new UserModel(userName, phoneNumber, Timestamp.now(), FirebaseUtils.currentUserId(),"Offline",allGroupsList);
         }
 
 
