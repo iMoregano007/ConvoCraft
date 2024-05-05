@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -115,22 +116,42 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
     }
 
     void setUserDetails(){
-        FirebaseUtils.getCurrentProfilePicStorageRef().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-            @Override
-            public void onComplete(@NonNull Task<Uri> task) {
-                if(task.isSuccessful()){
-                    Uri imageUri = task.getResult();
-                    AndroidUtils.setProfilePic(MainActivity.this,imageUri,profilePic);
-                }
-            }
-        });
+        SharedPreferences sharedPreferences = getSharedPreferences("userSharedPref",MODE_PRIVATE);
+        String uriString = sharedPreferences.getString("profilePicUri","");
+        String userNameMainScreen = sharedPreferences.getString("userName","");
 
-        FirebaseUtils.getCurrentUserDetails().get().addOnCompleteListener(task -> {
-            if(task.isSuccessful()){
-                UserModel currentUser = task.getResult().toObject(UserModel.class);
-                username.setText(currentUser.getUserName());
-            }
-        });
+        if(!uriString.isEmpty()){
+            Uri uri = Uri.parse(uriString);
+            AndroidUtils.setProfilePic(MainActivity.this,uri,profilePic);
+        } else{
+            FirebaseUtils.getCurrentProfilePicStorageRef().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if(task.isSuccessful()){
+                        Uri imageUri = task.getResult();
+                        AndroidUtils.setProfilePic(MainActivity.this,imageUri,profilePic);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("profilePicUri",imageUri.toString());
+                        editor.commit();
+                    }
+                }
+            });
+        }
+        if(!userNameMainScreen.isEmpty()){
+            username.setText(userNameMainScreen);
+        } else{
+            FirebaseUtils.getCurrentUserDetails().get().addOnCompleteListener(task -> {
+                if(task.isSuccessful()){
+                    UserModel currentUser = task.getResult().toObject(UserModel.class);
+                    username.setText(currentUser.getUserName());
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("userName",currentUser.getUserName());
+                    editor.commit();
+                }
+            });
+        }
+
+
     }
 
     void setUpRecyclerView(){

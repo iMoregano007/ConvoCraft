@@ -69,6 +69,11 @@ public class FirebaseUtils {
         }
     }
 
+    public static void DeleteMessage(String msgID, String chatroomID){
+        getChatroomMessageReference(chatroomID).document(msgID).delete();
+
+    }
+
     public static String timestampToString(Timestamp timestamp, boolean isRecentChat){
         Date date = timestamp.toDate();
 

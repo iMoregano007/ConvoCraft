@@ -1,6 +1,8 @@
 package com.im_oregano007.convocraft.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
@@ -76,6 +78,14 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
             } else {
                 holder.seenStatus.setText(seenS);
             }
+
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                showDialogBox(model.getMsgId(), model.getChatroomID());
+                return true;
+                }
+            });
         } else {
             if(isGroup){
                 holder.otherUserName.setVisibility(View.VISIBLE);
@@ -135,6 +145,26 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
                 },1000);
             }
         }
+    }
+    void showDialogBox(String msgID, String chatroomID){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+        alertDialog.setTitle("Delete Message");
+        alertDialog.setMessage("Do you want to Delete this message?");
+        alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                FirebaseUtils.DeleteMessage(msgID, chatroomID);
+                AndroidUtils.showToastShort(context,"Message Deleted Successfully");
+            }
+        });
+
+        alertDialog.show();
     }
     void openImageFullView(String chatroomId, String msgId){
         Intent intent = new Intent(context, ViewImageFullScreen.class);

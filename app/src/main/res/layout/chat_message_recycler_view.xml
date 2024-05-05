@@ -20,7 +20,7 @@
             android:textStyle="bold"
             tools:text="OtherUser"
             android:visibility="gone"
-            android:textColor="@color/my_primary"
+            android:textColor="#F37E3F"
             />
         <ImageView
             android:layout_width="240dp"

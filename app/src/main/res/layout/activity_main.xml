@@ -16,7 +16,7 @@
         <include layout="@layout/main_screen_shimmer_effect"/>
     </com.facebook.shimmer.ShimmerFrameLayout>
 
-
+<!--fix the layout properly, weights aren't working correctly  -->
 
     <LinearLayout
         android:layout_width="match_parent"
