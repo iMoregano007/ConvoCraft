@@ -56,7 +56,7 @@ public class CreateGroup extends AppCompatActivity {
 
         backBtn.setOnClickListener(v -> {
             AndroidUtils.clearUserList();
-            getOnBackPressedDispatcher().onBackPressed();
+            onBackPressed();
         });
 
         doneBtn.setOnClickListener( v ->{
@@ -83,6 +83,16 @@ public class CreateGroup extends AppCompatActivity {
 
 
         });
+
+    }
+    public void onBackPressed() {
+
+        Intent mainIntent;
+        mainIntent = new Intent(this, MainActivity.class);
+
+        mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
+        super.onBackPressed();
 
     }
 

@@ -11,7 +11,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/my_primary"
+        android:background="@color/toolbarColor"
         android:padding="10dp"
         android:id="@+id/toolbar">
         <TextView
@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:text="Search user"
             android:textStyle="bold"
-            android:textColor="@color/white"
+            android:textColor="@color/my_primary"
             android:layout_marginStart="10dp"
             android:textSize="22sp"
             android:layout_centerVertical="true"
@@ -29,7 +29,7 @@
             android:layout_height="32dp"
             android:src="@drawable/icon_back"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/white"
+            app:tint="@color/my_primary"
             android:id="@+id/back_button"/>
     </RelativeLayout>
 
@@ -69,6 +69,15 @@
         android:layout_below="@id/search_user_layout"
         android:id="@+id/search_user_recycler_view"
         android:padding="10dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/emptyRecyclerViewText"
+        android:background="@color/toolbarColor"
+        android:text="User Not Found!"
+        android:textSize="25sp"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
 
 
 </RelativeLayout>

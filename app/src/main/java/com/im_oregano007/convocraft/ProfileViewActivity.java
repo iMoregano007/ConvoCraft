@@ -58,11 +58,6 @@ public class ProfileViewActivity extends AppCompatActivity {
                 }
             }
         });
-        SharedPreferences sharedPreferences = getSharedPreferences("userSharedPref",MODE_PRIVATE);
-        String uriString = sharedPreferences.getString("profilePicUri","");
-        if(!uriString.isEmpty()){
-            shUri = Uri.parse(uriString);
-        }
 
         profilePic = findViewById(R.id.profile_picture_das);
         usernameInput = findViewById(R.id.profile_username);
@@ -75,7 +70,7 @@ public class ProfileViewActivity extends AppCompatActivity {
         dataView.setVisibility(View.INVISIBLE);
         backBtn = findViewById(R.id.back_button);
 
-        backBtn.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
+        backBtn.setOnClickListener(v -> onBackPressed());
 
         getUserData();
 
@@ -110,6 +105,17 @@ public class ProfileViewActivity extends AppCompatActivity {
 
 
 
+
+    }
+
+    public void onBackPressed() {
+
+        Intent mainIntent;
+        mainIntent = new Intent(this, MainActivity.class);
+
+        mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
+        super.onBackPressed();
 
     }
 
@@ -152,16 +158,14 @@ public class ProfileViewActivity extends AppCompatActivity {
     void getUserData(){
         hideShimmerEffect();
 
-        if(shUri!=null){
-            AndroidUtils.setProfilePic(this,shUri,profilePic);
-        }
-//        FirebaseUtils.getCurrentProfilePicStorageRef().getDownloadUrl().addOnCompleteListener(task -> {
-//            if(task.isSuccessful()){
-//                Uri imageUri = task.getResult();
-//                AndroidUtils.setProfilePic(this,imageUri,profilePic);
-//            }
-//
-//        });
+
+        FirebaseUtils.getCurrentProfilePicStorageRef().getDownloadUrl().addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                Uri imageUri = task.getResult();
+                AndroidUtils.setProfilePic(this,imageUri,profilePic);
+            }
+
+        });
 
         changeInProgress(true);
         FirebaseUtils.getCurrentUserDetails().get().addOnCompleteListener(task -> {

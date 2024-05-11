@@ -1,161 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".MainActivity"
-    android:padding="20dp"
     android:background="@color/background">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/toolbarColor"
+        android:padding="10dp"
+        android:id="@+id/toolbar"
+        android:layout_marginBottom="2dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textStyle="bold"
+            android:textColor="@color/my_primary"
+            android:textSize="25sp"
+            android:layout_centerVertical="true"
+            />
+                    <ImageView
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
+                        android:src="@drawable/user_icon"
+                        android:padding="2dp"
+                        android:layout_marginEnd="5dp"
+                        android:id="@+id/mainScreenProfilePic"
+                        android:background="@drawable/roundbg"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true"
+                        />
+                        <ImageView
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_marginEnd="8dp"
+                            android:id="@+id/createGroupBtn"
+                            android:src="@drawable/add_icon"
+                            android:layout_centerVertical="true"
+                            android:layout_toStartOf="@id/mainScreenProfilePic"
+                            app:tint="@color/my_primary"
+                            />
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="5dp"
+            android:id="@+id/searchUserBtn"
+            android:src="@drawable/search_icon"
+            android:layout_centerVertical="true"
+            app:tint="@color/my_primary"
+            android:layout_toStartOf="@id/createGroupBtn"
+            />
+
+
+    </RelativeLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/recyclerView"
+        android:layout_below="@id/toolbar"
+        android:paddingStart="2dp"
+        android:paddingEnd="2dp"
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/chatgptlogo"
+        android:backgroundTint="#AEFFFFFF"
+        android:id="@+id/chatWithAi"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginBottom="30dp"
+/>
     <com.facebook.shimmer.ShimmerFrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/shimmerEffectMainScreen">
-        <include layout="@layout/main_screen_shimmer_effect"/>
+        android:id="@+id/shimmer_view_recent_chats"
+        android:layout_below="@id/toolbar">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <include layout="@layout/shimmer_effect_recent_chats"/>
+            <include layout="@layout/shimmer_effect_recent_chats"/>
+            <include layout="@layout/shimmer_effect_recent_chats"/>
+            <include layout="@layout/shimmer_effect_recent_chats"/>
+            <include layout="@layout/shimmer_effect_recent_chats"/>
+            <include layout="@layout/shimmer_effect_recent_chats"/>
+            <include layout="@layout/shimmer_effect_recent_chats"/>
+            <include layout="@layout/shimmer_effect_recent_chats"/>
+            <include layout="@layout/shimmer_effect_recent_chats"/>
+            <include layout="@layout/shimmer_effect_recent_chats"/>
+            <include layout="@layout/shimmer_effect_recent_chats"/>
+            <include layout="@layout/shimmer_effect_recent_chats"/>
+            <include layout="@layout/shimmer_effect_recent_chats"/>
+            <include layout="@layout/shimmer_effect_recent_chats"/>
+            <include layout="@layout/shimmer_effect_recent_chats"/>
+            <include layout="@layout/shimmer_effect_recent_chats"/>
+        </LinearLayout>
     </com.facebook.shimmer.ShimmerFrameLayout>
 
-<!--fix the layout properly, weights aren't working correctly  -->
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_weight="3">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="5dp"
-            android:layout_marginEnd="5dp"
-            android:background="@drawable/card_view_bg"
-            android:id="@+id/recentChats"
-            android:layout_weight="3">
-            <TextView
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chats"
-                android:textSize="24sp"/>
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:id="@+id/mainScreenRecyclerV"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="2"
-            android:layout_marginStart="5dp"
-            >
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="5dp"
-                android:background="@drawable/card_view_bg"
-                android:layout_marginBottom="5dp"
-                android:layout_weight="1"
-                android:id="@+id/search_button"
-                >
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/search_icon"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Search \n  User"
-                    android:textSize="18sp"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="5dp"
-                android:background="@drawable/card_view_bg"
-                android:layout_marginTop="5dp"
-                android:layout_weight="1"
-                android:id="@+id/create_group"
-                >
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/add_icon"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Create \nGroup"
-                    android:textSize="18sp"/>
-            </LinearLayout>
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_weight="2"
-        android:layout_marginTop="10dp">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:background="@drawable/card_view_bg"
-            android:layout_weight="2"
-            android:layout_marginEnd="5dp"
-            android:id="@+id/chatWithAiBtn">
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/chatgptlogo"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/chat_with_ai"
-                android:layout_marginTop="20dp"
-                android:textSize="18sp"/>
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:layout_weight="3"
-            android:background="@drawable/card_view_bg"
-            android:layout_marginStart="5dp"
-            android:id="@+id/profileBtn">
-            <ImageView
-                android:layout_width="96dp"
-                android:layout_height="96dp"
-                android:src="@drawable/user_icon"
-                android:padding="2dp"
-                android:layout_marginBottom="20dp"
-                android:id="@+id/mainScreenProfilePic"
-                android:background="@drawable/roundbg"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Username"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:id="@+id/mainScreenUsername"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
+        android:id="@+id/emptyRecyclerViewText"
+        android:background="@color/toolbarColor"
+        android:text="No Recent Chats,\nStart Chatting Now"
+        android:textSize="25sp"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
 
 
 
 
-</LinearLayout>
+</RelativeLayout>

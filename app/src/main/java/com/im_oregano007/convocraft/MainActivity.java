@@ -1,6 +1,7 @@
 package com.im_oregano007.convocraft;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -10,21 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,26 +26,28 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
-import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.im_oregano007.convocraft.adapters.MainScreenRecentChatRecyclerAdapter;
+import com.im_oregano007.convocraft.adapters.RecentChatRecyclerAdapter;
 import com.im_oregano007.convocraft.model.ChatroomModel;
-import com.im_oregano007.convocraft.model.UserModel;
 import com.im_oregano007.convocraft.utils.AndroidUtils;
 import com.im_oregano007.convocraft.utils.FirebaseUtils;
 
 public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
-    LinearLayout searchBtn, createGroup, recentChats, chatWithAiBtn, profileBtn;
+
     RecyclerView mainScreenRecyclerV;
-    MainScreenRecentChatRecyclerAdapter adapter;
-    ImageView profilePic;
-    TextView username;
+    RecentChatRecyclerAdapter adapter;
+    ImageView profilePic ,searchBtn, createGroup;
+    FloatingActionButton chatWithAiBtn;
 
     ShimmerFrameLayout shimmerFrameLayout;
+    TextView emptyRecyclerViewText;
 
 
 private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
@@ -61,21 +56,18 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        searchBtn = findViewById(R.id.search_button);
-        createGroup = findViewById(R.id.create_group);
-        profileBtn = findViewById(R.id.profileBtn);
-        chatWithAiBtn = findViewById(R.id.chatWithAiBtn);
-        recentChats = findViewById(R.id.recentChats);
-        mainScreenRecyclerV = findViewById(R.id.mainScreenRecyclerV);
+        searchBtn = findViewById(R.id.searchUserBtn);
+        createGroup = findViewById(R.id.createGroupBtn);
+        chatWithAiBtn = findViewById(R.id.chatWithAi);
+        mainScreenRecyclerV = findViewById(R.id.recyclerView);
+        mainScreenRecyclerV.setVisibility(View.INVISIBLE);
         profilePic = findViewById(R.id.mainScreenProfilePic);
-        username = findViewById(R.id.mainScreenUsername);
-        shimmerFrameLayout = findViewById(R.id.shimmerEffectMainScreen);
+        shimmerFrameLayout = findViewById(R.id.shimmer_view_recent_chats);
+        emptyRecyclerViewText = findViewById(R.id.emptyRecyclerViewText);
 
 
-        recentChats.setOnClickListener(v ->{
-            startActivity(new Intent(MainActivity.this, RecentChats.class));
-        });
-        profileBtn.setOnClickListener(v ->{
+
+        profilePic.setOnClickListener(v ->{
             startActivity(new Intent(MainActivity.this, ProfileViewActivity.class));
 
         });
@@ -102,55 +94,30 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
 
         getFCMToken();
 
-        hideShimmerEffect();
+//        hideShimmerEffect();
 
     }
 
-    void hideShimmerEffect(){
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                shimmerFrameLayout.setVisibility(View.GONE);
-            }
-        },1500);
-    }
+//    void hideShimmerEffect(){
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                shimmerFrameLayout.setVisibility(View.GONE);
+//            }
+//        },1500);
+//    }
 
     void setUserDetails(){
-        SharedPreferences sharedPreferences = getSharedPreferences("userSharedPref",MODE_PRIVATE);
-        String uriString = sharedPreferences.getString("profilePicUri","");
-        String userNameMainScreen = sharedPreferences.getString("userName","");
 
-        if(!uriString.isEmpty()){
-            Uri uri = Uri.parse(uriString);
-            AndroidUtils.setProfilePic(MainActivity.this,uri,profilePic);
-        } else{
             FirebaseUtils.getCurrentProfilePicStorageRef().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                 @Override
                 public void onComplete(@NonNull Task<Uri> task) {
                     if(task.isSuccessful()){
                         Uri imageUri = task.getResult();
                         AndroidUtils.setProfilePic(MainActivity.this,imageUri,profilePic);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("profilePicUri",imageUri.toString());
-                        editor.commit();
                     }
                 }
             });
-        }
-        if(!userNameMainScreen.isEmpty()){
-            username.setText(userNameMainScreen);
-        } else{
-            FirebaseUtils.getCurrentUserDetails().get().addOnCompleteListener(task -> {
-                if(task.isSuccessful()){
-                    UserModel currentUser = task.getResult().toObject(UserModel.class);
-                    username.setText(currentUser.getUserName());
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("userName",currentUser.getUserName());
-                    editor.commit();
-                }
-            });
-        }
-
 
     }
 
@@ -158,15 +125,37 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
         Query query = FirebaseUtils.allChatroomCollectionReference()
                 .whereArrayContains("userIds",FirebaseUtils.currentUserId())
                 .orderBy("lastMessageTimeStamp", Query.Direction.DESCENDING);
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                assert value != null;
+                if(value.isEmpty()){
+                    emptyRecyclerViewText.setVisibility(View.VISIBLE);
+                } else{
+                    emptyRecyclerViewText.setVisibility(View.GONE);
+                }
+            }
+        });
 
         FirestoreRecyclerOptions<ChatroomModel> options = new FirestoreRecyclerOptions.Builder<ChatroomModel>()
                 .setQuery(query, ChatroomModel.class).build();
-        adapter = new MainScreenRecentChatRecyclerAdapter(options,this);
+        hideShimmerEffect();
+        adapter = new RecentChatRecyclerAdapter(options,this);
         mainScreenRecyclerV.setLayoutManager(new LinearLayoutManager(this));
         mainScreenRecyclerV.setAdapter(adapter);
         adapter.startListening();
     }
 
+    void hideShimmerEffect(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mainScreenRecyclerV.setVisibility(View.VISIBLE);
+                shimmerFrameLayout.setVisibility(View.GONE);
+            }
+        },1500);
+
+    }
 
     @Override
     protected void onResume() {

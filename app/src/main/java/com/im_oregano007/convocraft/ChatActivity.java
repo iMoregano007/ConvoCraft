@@ -5,6 +5,7 @@ import androidx.activity.OnBackPressedDispatcher;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,7 +31,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.im_oregano007.convocraft.adapters.ChatRecyclerAdapter;
 import com.im_oregano007.convocraft.adapters.SearchUserRecyclerAdapter;
 import com.im_oregano007.convocraft.model.ChatMessageModel;
@@ -63,7 +67,7 @@ public class ChatActivity extends AppCompatActivity {
 
     ChatRecyclerAdapter adapter;
 
-    TextView otherUsername;
+    TextView otherUsername, emptyRecyclerViewText;
     ImageButton backBtn, messageSendBtn, imgSelectBtn;
     EditText inputMessage;
     RecyclerView chatRecyclerView;
@@ -115,6 +119,7 @@ public class ChatActivity extends AppCompatActivity {
         activeStatus = findViewById(R.id.otherUserStatus);
         otherUserDetails = findViewById(R.id.otherUserDetails);
         imgSelectBtn = findViewById(R.id.imgSelectBtn);
+        emptyRecyclerViewText = findViewById(R.id.emptyRecyclerViewText);
 
         profilePic = findViewById(R.id.user_profile_picture);
 
@@ -215,12 +220,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
 
-        backBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        backBtn.setOnClickListener(v -> onBackPressed());
 
 
 
@@ -255,6 +255,17 @@ public class ChatActivity extends AppCompatActivity {
     void setUpRecyclerView(){
         Query query = FirebaseUtils.getChatroomMessageReference(chatroomID)
                 .orderBy("timestamp", Query.Direction.DESCENDING);
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                assert value != null;
+                if(value.isEmpty()){
+                    emptyRecyclerViewText.setVisibility(View.VISIBLE);
+                } else{
+                    emptyRecyclerViewText.setVisibility(View.GONE);
+                }
+            }
+        });
 
         FirestoreRecyclerOptions<ChatMessageModel> options = new FirestoreRecyclerOptions.Builder<ChatMessageModel>()
                 .setQuery(query,ChatMessageModel.class).build();
@@ -327,7 +338,7 @@ public class ChatActivity extends AppCompatActivity {
         if (cameFromSearchUser) {
             mainIntent = new Intent(this, SearchUserActivity.class);
         } else {
-            mainIntent = new Intent(this, RecentChats.class);
+            mainIntent = new Intent(this, MainActivity.class);
         }
 
         mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

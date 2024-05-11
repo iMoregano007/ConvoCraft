@@ -1,6 +1,7 @@
 package com.im_oregano007.convocraft;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,10 +11,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.im_oregano007.convocraft.adapters.SearchUserRecyclerAdapter;
 import com.im_oregano007.convocraft.model.UserModel;
 import com.im_oregano007.convocraft.utils.AndroidUtils;
@@ -24,6 +29,7 @@ public class SearchUserActivity extends AppCompatActivity {
     EditText inputSearch;
     ImageButton searchUserBtn, backBtn;
     RecyclerView recyclerView;
+    TextView emptyRecyclerViewText;
 
     SearchUserRecyclerAdapter adapter;
 
@@ -36,6 +42,7 @@ public class SearchUserActivity extends AppCompatActivity {
         searchUserBtn = findViewById(R.id.search_user_btn);
         backBtn = findViewById(R.id.back_button);
         recyclerView = findViewById(R.id.search_user_recycler_view);
+        emptyRecyclerViewText = findViewById(R.id.emptyRecyclerViewText);
         setOnlineStatus(true);
 
 //        inputSearch.requestFocus();
@@ -82,6 +89,17 @@ public class SearchUserActivity extends AppCompatActivity {
                     .whereGreaterThanOrEqualTo("userName",searchTerm)
                     .whereLessThanOrEqualTo("userName",searchTerm+'\uf8ff');
         }
+        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if(value.isEmpty()){
+                    emptyRecyclerViewText.setVisibility(View.VISIBLE);
+                    AndroidUtils.showToastShort(SearchUserActivity.this,"No Data exists...");
+                } else{
+                    emptyRecyclerViewText.setVisibility(View.GONE);
+                }
+            }
+        });
 
         FirestoreRecyclerOptions<UserModel> options = new FirestoreRecyclerOptions.Builder<UserModel>()
                 .setQuery(query,UserModel.class).build();

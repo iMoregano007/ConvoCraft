@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -70,7 +71,7 @@ OkHttpClient client = new OkHttpClient.Builder()
         });
 
         backBtn.setOnClickListener(v -> {
-            getOnBackPressedDispatcher().onBackPressed();
+            onBackPressed();
         });
 
 //        setup recycler view
@@ -95,6 +96,16 @@ OkHttpClient client = new OkHttpClient.Builder()
                 chatgptRecyclerView.smoothScrollToPosition(chatGptAdapter.getItemCount());
             }
         });
+    }
+    public void onBackPressed() {
+
+        Intent mainIntent;
+        mainIntent = new Intent(this, MainActivity.class);
+
+        mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(mainIntent);
+        super.onBackPressed();
+
     }
 
     void setStatus(boolean isTyping){

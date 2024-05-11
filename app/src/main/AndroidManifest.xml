@@ -18,9 +18,6 @@
             android:name=".ProfileViewActivity"
             android:exported="false" />
         <activity
-            android:name=".RecentChats"
-            android:exported="false" />
-        <activity
             android:name=".ViewImageFullScreen"
             android:exported="false" />
         <activity
