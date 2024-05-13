@@ -60,15 +60,7 @@
             android:layout_marginBottom="40dp"
             android:id="@+id/profile_picture_userDetails"
             android:layout_gravity="center_horizontal"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Update"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="20dp"
-            android:padding="10dp"
-            android:id="@+id/updatePhotoBtn"
-            android:visibility="gone"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -24,7 +24,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/chatgpt_ai"
+                android:text="ConvoAI"
                 android:textStyle="bold"
                 android:textColor="@color/white"
                 android:textSize="22sp"
@@ -56,13 +56,13 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:padding="3dp"
-            android:src="@drawable/chatgptlogo"
+            android:src="@drawable/ai_icon"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
             android:background="@drawable/roundbg"
             android:layout_toEndOf="@id/back_button"
             android:id="@+id/chatgptIcon"
-            />
+            app:tint="#5357B6" />
 
     </RelativeLayout>
     <LinearLayout

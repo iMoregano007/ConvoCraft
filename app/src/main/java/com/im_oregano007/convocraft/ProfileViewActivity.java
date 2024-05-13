@@ -81,6 +81,7 @@ public class ProfileViewActivity extends AppCompatActivity {
         logoutBtn.setOnClickListener(v -> {
             FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener(task -> {
                 if(task.isSuccessful()){
+//                    AndroidUtils.setOnlineStatus(false);
                     FirebaseUtils.logout();
                     AndroidUtils.showToastShort(this,"Logged Out Successfully");
                     Intent intent = new Intent(this, SplashScreen.class);

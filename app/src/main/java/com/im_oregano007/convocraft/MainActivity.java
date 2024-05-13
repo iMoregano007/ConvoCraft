@@ -39,7 +39,6 @@ import com.im_oregano007.convocraft.utils.FirebaseUtils;
 
 public class MainActivity extends AppCompatActivity {
 
-    BottomNavigationView bottomNavigationView;
 
     RecyclerView mainScreenRecyclerV;
     RecentChatRecyclerAdapter adapter;
@@ -48,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
     ShimmerFrameLayout shimmerFrameLayout;
     TextView emptyRecyclerViewText;
+    String currentUserId;
 
 
 private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
@@ -66,7 +66,7 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
         emptyRecyclerViewText = findViewById(R.id.emptyRecyclerViewText);
 
 
-
+        currentUserId = FirebaseUtils.currentUserId();
         profilePic.setOnClickListener(v ->{
             startActivity(new Intent(MainActivity.this, ProfileViewActivity.class));
 
@@ -94,18 +94,9 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
 
         getFCMToken();
 
-//        hideShimmerEffect();
 
     }
 
-//    void hideShimmerEffect(){
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                shimmerFrameLayout.setVisibility(View.GONE);
-//            }
-//        },1500);
-//    }
 
     void setUserDetails(){
 
@@ -128,12 +119,15 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                assert value != null;
-                if(value.isEmpty()){
-                    emptyRecyclerViewText.setVisibility(View.VISIBLE);
-                } else{
-                    emptyRecyclerViewText.setVisibility(View.GONE);
+//                assert value != null;
+                if(value != null){
+                    if(value.isEmpty()){
+                        emptyRecyclerViewText.setVisibility(View.VISIBLE);
+                    } else{
+                        emptyRecyclerViewText.setVisibility(View.GONE);
+                    }
                 }
+
             }
         });
 
@@ -256,7 +250,7 @@ private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1;
     }
 
     void setOnlineStatus(boolean isOnline){
-        AndroidUtils.setOnlineStatus(isOnline);
+        AndroidUtils.setOnlineStatus(isOnline, currentUserId);
     }
 
 }

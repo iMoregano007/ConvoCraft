@@ -38,7 +38,12 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
 
         if(model.isGroup()){
             holder.usernameTextV.setText(model.getGroupName());
-
+            FirebaseUtils.getGroupDPStorageRef().getDownloadUrl().addOnCompleteListener(task1 -> {
+                if(task1.isSuccessful()){
+                    Uri imgUri = task1.getResult();
+                    AndroidUtils.setProfilePic(context,imgUri,holder.profilePic);
+                }
+            });
 
         } else {
             FirebaseUtils.getOtherUserFromChatroom(model.getUserIds())
@@ -96,11 +101,6 @@ public class RecentChatRecyclerAdapter extends FirestoreRecyclerAdapter<Chatroom
                                 }
                             }
 
-                        }else {
-                            if(lastMsgSentByMe){
-                                holder.lastMessageTextV.setText("You : "+model.getLastMessage());
-                            } else
-                                holder.lastMessageTextV.setText(model.getLastMessage());
                         }
 
                     }

@@ -39,7 +39,6 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
 
     @Override
     protected void onBindViewHolder(@NonNull ChatModelViewHolder holder, int position, @NonNull ChatMessageModel model) {
-//        can set timestamp as well from here
         String chatroomID = model.getChatroomID();
         boolean isGroup = model.isGroup();
         boolean isImage = model.isImage();
@@ -68,7 +67,6 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
                     }
                 });
             }else{
-//                holder.rightChatTextV.setVisibility(View.VISIBLE);
                 holder.rightChatTextV.setText(model.getMessage());
 
             }
@@ -123,7 +121,6 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
                     }
                 });
             }else{
-//                holder.rightChatTextV.setVisibility(View.VISIBLE);
                 holder.leftChatTextV.setText(model.getMessage());
 
             }

@@ -82,7 +82,6 @@ public class ChatActivity extends AppCompatActivity {
     ChatroomModel groupChatroom;
     boolean groupChat;
     String groupName = "GroupChat";
-//p1
     ActivityResultLauncher<Intent> imagePicLauncher;
     Uri selectedImageUri;
     ImageView selectedImage;
@@ -95,7 +94,6 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
         isImage = false;
 
-//        trying to implement send photo functionality p2
         imagePicLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result ->{
             if(result.getResultCode() == Activity.RESULT_OK){
                 Intent data = result.getData();
@@ -130,17 +128,21 @@ public class ChatActivity extends AppCompatActivity {
             FirebaseUtils.getChatroomReference(chatroomID).get().addOnCompleteListener(task -> {
                 if(task.isSuccessful()){
                     groupChatroom = task.getResult().toObject(ChatroomModel.class);
-                    groupName = groupChatroom.getGroupName();
                     if(groupChat){
+                        groupName = groupChatroom.getGroupName();
                         otherUsername.setText(groupChatroom.getGroupName());
                         activeStatus.setVisibility(View.INVISIBLE);
-//                        otherUserDetails.setEnabled(false);
+                        FirebaseUtils.getGroupDPStorageRef().getDownloadUrl().addOnCompleteListener(task1 -> {
+                            if(task1.isSuccessful()){
+                                Uri imgUri = task1.getResult();
+                                AndroidUtils.setProfilePic(ChatActivity.this,imgUri,profilePic);
+                            }
+                        });
                     }
 
                 }
             });
         }
-//p3
         imgSelectBtn.setOnClickListener((v) ->{
             ImagePicker.with(this).cropSquare().compress(512).maxResultSize(512,384)
                     .createIntent(new Function1<Intent, Unit>() {
@@ -258,12 +260,14 @@ public class ChatActivity extends AppCompatActivity {
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                assert value != null;
-                if(value.isEmpty()){
-                    emptyRecyclerViewText.setVisibility(View.VISIBLE);
-                } else{
-                    emptyRecyclerViewText.setVisibility(View.GONE);
+                if(value != null){
+                    if(value.isEmpty()){
+                        emptyRecyclerViewText.setVisibility(View.VISIBLE);
+                    } else{
+                        emptyRecyclerViewText.setVisibility(View.GONE);
+                    }
                 }
+
             }
         });
 
@@ -427,7 +431,7 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     void setOnlineStatus(boolean isOnline){
-        AndroidUtils.setOnlineStatus(isOnline);
+        AndroidUtils.setOnlineStatus(isOnline,FirebaseUtils.currentUserId());
     }
 
 }

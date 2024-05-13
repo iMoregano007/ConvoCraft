@@ -75,12 +75,12 @@
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/chatgptlogo"
+        android:src="@drawable/ai_icon"
         android:backgroundTint="#AEFFFFFF"
         android:id="@+id/chatWithAi"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="30dp"
         android:layout_marginBottom="30dp"
 />
     <com.facebook.shimmer.ShimmerFrameLayout

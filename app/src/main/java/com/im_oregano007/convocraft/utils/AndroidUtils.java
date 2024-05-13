@@ -52,11 +52,11 @@ public class AndroidUtils {
         Glide.with(context).load(imageUri).apply(RequestOptions.centerCropTransform()).into(imageView);
     }
 
-    public static void setOnlineStatus(boolean isOnline){
+    public static void setOnlineStatus(boolean isOnline, String uId){
         if(isOnline){
-            FirebaseUtils.getCurrentUserDetails().update("onlineStatus","online");
+            FirebaseUtils.getUserDetails(uId).update("onlineStatus","online");
         } else {
-            FirebaseUtils.getCurrentUserDetails().update("onlineStatus","offline");
+            FirebaseUtils.getUserDetails(uId).update("onlineStatus","offline");
 
         }
 

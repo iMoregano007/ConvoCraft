@@ -37,7 +37,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class ChatgptScreen extends AppCompatActivity {
-//    trying to solve a bug
 public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
 OkHttpClient client = new OkHttpClient.Builder()
@@ -58,8 +57,6 @@ OkHttpClient client = new OkHttpClient.Builder()
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chatgpt_screen);
-//        trying to solve a bug
-
 
         messageList = new ArrayList<>();
 
@@ -93,7 +90,6 @@ OkHttpClient client = new OkHttpClient.Builder()
             }
         });
 
-//        setup recycler view
         chatGptAdapter = new ChatGptAdapter(messageList);
         chatgptRecyclerView.setAdapter(chatGptAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);

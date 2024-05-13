@@ -44,9 +44,6 @@ public class SearchUserActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.search_user_recycler_view);
         emptyRecyclerViewText = findViewById(R.id.emptyRecyclerViewText);
         setOnlineStatus(true);
-
-//        inputSearch.requestFocus();
-
         setupSearchRecyclerView(" ", true);
 
 
@@ -54,8 +51,6 @@ public class SearchUserActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 onBackPressed();
-//                getOnBackPressedDispatcher().onBackPressed();
-//                onBackPressedDispatcher.onBackPressed();
             }
         });
 
@@ -92,12 +87,15 @@ public class SearchUserActivity extends AppCompatActivity {
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if(value.isEmpty()){
-                    emptyRecyclerViewText.setVisibility(View.VISIBLE);
-                    AndroidUtils.showToastShort(SearchUserActivity.this,"No Data exists...");
-                } else{
-                    emptyRecyclerViewText.setVisibility(View.GONE);
+                if(value != null){
+                    if(value.isEmpty()){
+                        emptyRecyclerViewText.setVisibility(View.VISIBLE);
+                        AndroidUtils.showToastShort(SearchUserActivity.this,"No Data exists...");
+                    } else{
+                        emptyRecyclerViewText.setVisibility(View.GONE);
+                    }
                 }
+
             }
         });
 
@@ -136,7 +134,7 @@ public class SearchUserActivity extends AppCompatActivity {
 
 
     void setOnlineStatus(boolean isOnline){
-        AndroidUtils.setOnlineStatus(isOnline);
+        AndroidUtils.setOnlineStatus(isOnline,FirebaseUtils.currentUserId());
     }
 
 }

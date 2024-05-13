@@ -43,9 +43,6 @@ public class UserDetails extends AppCompatActivity {
     RecyclerView groupMembersRecyclerV;
     GroupMembersDetailsAdapter adapter;
     LinearLayout groupDetails;
-    Uri selectedImageUri;
-    ActivityResultLauncher<Intent> imagePicker;
-    Button updatePhotoBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,21 +51,7 @@ public class UserDetails extends AppCompatActivity {
 
         isGroupChat = getIntent().getBooleanExtra("isGroupChat",false);
         chatroomId = getIntent().getStringExtra("chatroomID");
-        updatePhotoBtn = findViewById(R.id.updatePhotoBtn);
 
-
-        if(isGroupChat){
-            imagePicker = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result ->{
-                if(result.getResultCode() == Activity.RESULT_OK){
-                    Intent data = result.getData();
-                    if(data!=null && data.getData()!=null){
-                        selectedImageUri = data.getData();
-                        AndroidUtils.setProfilePic(UserDetails.this,selectedImageUri,otherUserProfilePic);
-                        adapter.notifyDataSetChanged();
-                    }
-                }
-            });
-        }
 
         setOnlineStatus(true);
         usernameToolbar = findViewById(R.id.userDetails_username);
@@ -91,39 +74,13 @@ public class UserDetails extends AppCompatActivity {
             groupDetails.setVisibility(View.VISIBLE);
             setUpRecyclerView();
             setPhoto(chatroomId);
-            otherUserProfilePic.setOnClickListener((v) ->{
-                updatePhotoBtn.setVisibility(View.VISIBLE);
-                ImagePicker.with(UserDetails.this).cropSquare().compress(512).maxResultSize(512,512)
-                        .createIntent(new Function1<Intent, Unit>() {
-                            @Override
-                            public Unit invoke(Intent intent) {
-                                imagePicker.launch(intent);
-                                return null;
-                            }
-                        });
-                adapter.notifyDataSetChanged();
-            });
-            updatePhotoBtn.setOnClickListener(v-> updatePhoto(chatroomId));
         } else{
             UserModel otherUser = AndroidUtils.getUserModelFromIntent(getIntent());
             updateDetails(otherUser);
         }
 
     }
-    void updatePhoto(String groupId){
-        FirebaseUtils.getGroupDPStorageRef().putFile(selectedImageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if(task.isSuccessful()){
-                    AndroidUtils.showToastShort(UserDetails.this,"Photo Updated Successfully");
-                    updatePhotoBtn.setVisibility(View.GONE);
-                } else {
-                    AndroidUtils.showToastShort(UserDetails.this,"Something went Wrong");
-                }
 
-            }
-        });
-    }
     void setPhoto(String groupId){
         FirebaseUtils.getGroupDPStorageRef().getDownloadUrl().addOnCompleteListener(t -> {
             if(t.isSuccessful()){
@@ -193,7 +150,7 @@ public class UserDetails extends AppCompatActivity {
     }
 
     void setOnlineStatus(boolean isOnline){
-        AndroidUtils.setOnlineStatus(isOnline);
+        AndroidUtils.setOnlineStatus(isOnline,FirebaseUtils.currentUserId());
     }
 
 }
