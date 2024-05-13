@@ -11,7 +11,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/background"
         android:padding="10dp"
         android:id="@+id/toolbar">
         <TextView
@@ -19,7 +18,7 @@
             android:layout_height="wrap_content"
             android:text="Username"
             android:textStyle="bold"
-            android:textColor="@color/white"
+            android:textColor="@color/my_primary"
             android:layout_marginStart="10dp"
             android:textSize="22sp"
             android:id="@+id/userDetails_username"
@@ -30,15 +29,22 @@
             android:layout_height="36dp"
             android:src="@drawable/icon_back"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/white"
+            app:tint="@color/my_primary"
             android:id="@+id/back_button"/>
     </RelativeLayout>
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        app:dividerColor="@color/my_primary"
+        android:layout_below="@id/toolbar"
+        android:id="@+id/divider"
+        android:layout_marginBottom="2dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_below="@id/toolbar"
+        android:layout_below="@id/divider"
         android:layout_marginTop="20dp"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
@@ -54,6 +60,15 @@
             android:layout_marginBottom="40dp"
             android:id="@+id/profile_picture_userDetails"
             android:layout_gravity="center_horizontal"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Update"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:padding="10dp"
+            android:id="@+id/updatePhotoBtn"
+            android:visibility="gone"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

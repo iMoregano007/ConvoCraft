@@ -106,7 +106,18 @@ public class FirebaseUtils {
                 .child("profile_pic").child(otherUserID);
     }
 
+    public static StorageReference getGroupDPStorageRef(){
+        return FirebaseStorage.getInstance().getReference().child("group_dp").child("group_chat");
+    }
 
+//    trying to get chatgpt api from firebase
 
+    public static CollectionReference allApiReference(){
+        return FirebaseFirestore.getInstance().collection("api_key");
+    }
+
+    public static DocumentReference getChatGptApi(){
+        return allApiReference().document("chatgptapi");
+    }
 
 }

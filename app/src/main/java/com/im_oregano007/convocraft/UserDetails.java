@@ -1,24 +1,37 @@
 package com.im_oregano007.convocraft;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.github.dhaval2404.imagepicker.ImagePicker;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.storage.UploadTask;
 import com.im_oregano007.convocraft.adapters.GroupMembersDetailsAdapter;
 import com.im_oregano007.convocraft.model.UserModel;
 import com.im_oregano007.convocraft.utils.AndroidUtils;
 import com.im_oregano007.convocraft.utils.FirebaseUtils;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 public class UserDetails extends AppCompatActivity {
 
@@ -30,6 +43,9 @@ public class UserDetails extends AppCompatActivity {
     RecyclerView groupMembersRecyclerV;
     GroupMembersDetailsAdapter adapter;
     LinearLayout groupDetails;
+    Uri selectedImageUri;
+    ActivityResultLauncher<Intent> imagePicker;
+    Button updatePhotoBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +54,21 @@ public class UserDetails extends AppCompatActivity {
 
         isGroupChat = getIntent().getBooleanExtra("isGroupChat",false);
         chatroomId = getIntent().getStringExtra("chatroomID");
+        updatePhotoBtn = findViewById(R.id.updatePhotoBtn);
 
 
+        if(isGroupChat){
+            imagePicker = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result ->{
+                if(result.getResultCode() == Activity.RESULT_OK){
+                    Intent data = result.getData();
+                    if(data!=null && data.getData()!=null){
+                        selectedImageUri = data.getData();
+                        AndroidUtils.setProfilePic(UserDetails.this,selectedImageUri,otherUserProfilePic);
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            });
+        }
 
         setOnlineStatus(true);
         usernameToolbar = findViewById(R.id.userDetails_username);
@@ -61,12 +90,48 @@ public class UserDetails extends AppCompatActivity {
             usernameHolder.setVisibility(View.GONE);
             groupDetails.setVisibility(View.VISIBLE);
             setUpRecyclerView();
-
+            setPhoto(chatroomId);
+            otherUserProfilePic.setOnClickListener((v) ->{
+                updatePhotoBtn.setVisibility(View.VISIBLE);
+                ImagePicker.with(UserDetails.this).cropSquare().compress(512).maxResultSize(512,512)
+                        .createIntent(new Function1<Intent, Unit>() {
+                            @Override
+                            public Unit invoke(Intent intent) {
+                                imagePicker.launch(intent);
+                                return null;
+                            }
+                        });
+                adapter.notifyDataSetChanged();
+            });
+            updatePhotoBtn.setOnClickListener(v-> updatePhoto(chatroomId));
         } else{
             UserModel otherUser = AndroidUtils.getUserModelFromIntent(getIntent());
             updateDetails(otherUser);
         }
 
+    }
+    void updatePhoto(String groupId){
+        FirebaseUtils.getGroupDPStorageRef().putFile(selectedImageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                if(task.isSuccessful()){
+                    AndroidUtils.showToastShort(UserDetails.this,"Photo Updated Successfully");
+                    updatePhotoBtn.setVisibility(View.GONE);
+                } else {
+                    AndroidUtils.showToastShort(UserDetails.this,"Something went Wrong");
+                }
+
+            }
+        });
+    }
+    void setPhoto(String groupId){
+        FirebaseUtils.getGroupDPStorageRef().getDownloadUrl().addOnCompleteListener(t -> {
+            if(t.isSuccessful()){
+                Uri imageUri = t.getResult();
+                AndroidUtils.setProfilePic(this,imageUri,otherUserProfilePic);
+            }
+
+        });
     }
     void setUpRecyclerView(){
         Query query = FirebaseUtils.allUsersCollectionReference()

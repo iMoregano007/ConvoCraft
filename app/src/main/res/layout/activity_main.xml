@@ -10,7 +10,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/toolbarColor"
         android:padding="10dp"
         android:id="@+id/toolbar"
         android:layout_marginBottom="2dp">
@@ -57,11 +56,18 @@
 
 
     </RelativeLayout>
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        app:dividerColor="@color/my_primary"
+        android:layout_below="@id/toolbar"
+        android:id="@+id/divider"
+        android:layout_marginBottom="2dp"/>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/recyclerView"
-        android:layout_below="@id/toolbar"
+        android:layout_below="@id/divider"
         android:paddingStart="2dp"
         android:paddingEnd="2dp"
         />
@@ -81,7 +87,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/shimmer_view_recent_chats"
-        android:layout_below="@id/toolbar">
+        android:layout_below="@id/divider">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

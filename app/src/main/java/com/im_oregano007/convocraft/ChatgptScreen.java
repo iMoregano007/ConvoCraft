@@ -11,8 +11,13 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.im_oregano007.convocraft.chatgpt.ChatGptAdapter;
+import com.im_oregano007.convocraft.chatgpt.ChatGptApi;
 import com.im_oregano007.convocraft.chatgpt.ChatGptMessage;
+import com.im_oregano007.convocraft.utils.FirebaseUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,6 +52,8 @@ OkHttpClient client = new OkHttpClient.Builder()
     List<ChatGptMessage> messageList;
     ChatGptAdapter chatGptAdapter;
 
+    String chatgptApiKey;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +79,18 @@ OkHttpClient client = new OkHttpClient.Builder()
 
         backBtn.setOnClickListener(v -> {
             onBackPressed();
+        });
+
+        FirebaseUtils.getChatGptApi().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    ChatGptApi chatGptApi = task.getResult().toObject(ChatGptApi.class);
+                    if(chatGptApi!=null){
+                        chatgptApiKey = chatGptApi.getKey();
+                    }
+                }
+            }
         });
 
 //        setup recycler view
@@ -145,7 +164,7 @@ OkHttpClient client = new OkHttpClient.Builder()
         RequestBody body = RequestBody.create(jsonBody.toString(), JSON);
         Request request = new Request.Builder()
                 .url("https://api.openai.com/v1/chat/completions")
-                .header("Authorization","Bearer --apiKey--")
+                .header("Authorization","Bearer "+chatgptApiKey)
                 .post(body)
                 .build();
 
