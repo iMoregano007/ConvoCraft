@@ -11,8 +11,15 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.ai.client.generativeai.GenerativeModel;
+import com.google.ai.client.generativeai.java.GenerativeModelFutures;
+import com.google.ai.client.generativeai.type.Content;
+import com.google.ai.client.generativeai.type.GenerateContentResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.im_oregano007.convocraft.chatgpt.ChatGptAdapter;
 import com.im_oregano007.convocraft.chatgpt.ChatGptApi;
@@ -51,7 +58,7 @@ OkHttpClient client = new OkHttpClient.Builder()
     List<ChatGptMessage> messageList;
     ChatGptAdapter chatGptAdapter;
 
-    String chatgptApiKey;
+    String apiKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,13 +85,15 @@ OkHttpClient client = new OkHttpClient.Builder()
             onBackPressed();
         });
 
-        FirebaseUtils.getChatGptApi().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        String model = "geminiapi"; //for gemini, for chatgpt - chatgptapi
+
+        FirebaseUtils.getApiKey(model).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
                     ChatGptApi chatGptApi = task.getResult().toObject(ChatGptApi.class);
                     if(chatGptApi!=null){
-                        chatgptApiKey = chatGptApi.getKey();
+                        apiKey = chatGptApi.getKey();
                     }
                 }
             }
@@ -138,59 +147,83 @@ OkHttpClient client = new OkHttpClient.Builder()
     }
 
     void callAPI(String question){
-        //okhttp
-
-        JSONObject jsonBody = new JSONObject();
-
-        try {
-            jsonBody.put("model","gpt-3.5-turbo");
-
-            JSONArray messageArr = new JSONArray();
-            JSONObject obj = new JSONObject();
-            obj.put("role","user");
-            obj.put("content",question);
-            messageArr.put(obj);
-
-            jsonBody.put("messages",messageArr);
-
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-
-        RequestBody body = RequestBody.create(jsonBody.toString(), JSON);
-        Request request = new Request.Builder()
-                .url("https://api.openai.com/v1/chat/completions")
-                .header("Authorization","Bearer "+chatgptApiKey)
-                .post(body)
+//        gemini version
+        GenerativeModel generativeModel = new GenerativeModel("gemini-pro",
+                apiKey);
+        GenerativeModelFutures model = GenerativeModelFutures.from(generativeModel);
+        Content content = new Content.Builder()
+                .addText(question)
                 .build();
 
-        client.newCall(request).enqueue(new Callback() {
+        ListenableFuture<GenerateContentResponse> response = model.generateContent(content);
+        Futures.addCallback(response, new FutureCallback<GenerateContentResponse>() {
             @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                addResponse("Failed to load response due to "+e.getMessage());
+            public void onSuccess(GenerateContentResponse result) {
+                String resultText = result.getText();
+                addResponse(resultText);
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if(response.isSuccessful()){
-                    JSONObject jsonObject = null;
-                    try {
-                        jsonObject = new JSONObject(response.body().string());
-                        JSONArray jsonArray = jsonObject.getJSONArray("choices");
-                        String result = jsonArray.getJSONObject(0)
-                                .getJSONObject("message")
-                                .getString("content");
-                        addResponse(result.trim());
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                }else{
-                    addResponse("Failed to load response due to "+response.body().toString());
-
-                }
+            public void onFailure(Throwable t) {
+                addResponse("Failed to get Result due to"+t.getMessage());
+                t.printStackTrace();
             }
-        });
+        }, this.getMainExecutor());
+
+//        chatgpt version
+        //okhttp
+
+//        JSONObject jsonBody = new JSONObject();
+//
+//        try {
+//            jsonBody.put("model","gpt-3.5-turbo");
+//
+//            JSONArray messageArr = new JSONArray();
+//            JSONObject obj = new JSONObject();
+//            obj.put("role","user");
+//            obj.put("content",question);
+//            messageArr.put(obj);
+//
+//            jsonBody.put("messages",messageArr);
+//
+//        } catch (JSONException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        RequestBody body = RequestBody.create(jsonBody.toString(), JSON);
+//        Request request = new Request.Builder()
+//                .url("https://api.openai.com/v1/chat/completions")
+//                .header("Authorization","Bearer "+chatgptApiKey)
+//                .post(body)
+//                .build();
+//
+//        client.newCall(request).enqueue(new Callback() {
+//            @Override
+//            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+//                addResponse("Failed to load response due to "+e.getMessage());
+//            }
+//
+//            @Override
+//            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+//                if(response.isSuccessful()){
+//                    JSONObject jsonObject = null;
+//                    try {
+//                        jsonObject = new JSONObject(response.body().string());
+//                        JSONArray jsonArray = jsonObject.getJSONArray("choices");
+//                        String result = jsonArray.getJSONObject(0)
+//                                .getJSONObject("message")
+//                                .getString("content");
+//                        addResponse(result.trim());
+//                    } catch (JSONException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//
+//                }else{
+//                    addResponse("Failed to load response due to "+response.body().toString());
+//
+//                }
+//            }
+//        });
 
     }
 

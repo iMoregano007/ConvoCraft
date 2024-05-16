@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -99,6 +100,12 @@ public class CreateGroup extends AppCompatActivity {
     void addGroupToUsersProfile(){
         List<String> membersList = AndroidUtils.getUserList();
         int index , size = AndroidUtils.getUserListSize();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        },1500);
         for(index = 0;index<size;index++){
             String userId = membersList.get(index);
             FirebaseUtils.getUserDetails(userId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

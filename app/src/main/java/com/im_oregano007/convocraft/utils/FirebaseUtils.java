@@ -116,8 +116,8 @@ public class FirebaseUtils {
         return FirebaseFirestore.getInstance().collection("api_key");
     }
 
-    public static DocumentReference getChatGptApi(){
-        return allApiReference().document("chatgptapi");
+    public static DocumentReference getApiKey(String model){
+        return allApiReference().document(model);
     }
 
 }
