@@ -67,6 +67,7 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
                     }
                 });
             }else{
+                holder.rightImageV.setVisibility(View.GONE);
                 holder.rightChatTextV.setText(model.getMessage());
 
             }
@@ -121,6 +122,7 @@ public class ChatRecyclerAdapter extends FirestoreRecyclerAdapter<ChatMessageMod
                     }
                 });
             }else{
+                holder.leftImageV.setVisibility(View.GONE);
                 holder.leftChatTextV.setText(model.getMessage());
 
             }
